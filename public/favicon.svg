@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="96" fill="#070605" stroke="#F4F4F4" stroke-width="3" />
+  <rect x="34" y="58" width="132" height="84" fill="none" stroke="#F4F4F4" stroke-width="2.4" />
+  <text x="100" y="96" text-anchor="middle" fill="#F7F7F7" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="600" textLength="112" lengthAdjust="spacing">SMOKY</text>
+  <text x="100" y="128" text-anchor="middle" fill="#F7F7F7" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="600" textLength="112" lengthAdjust="spacing">BROS</text>
+</svg>
