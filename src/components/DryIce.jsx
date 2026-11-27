@@ -138,9 +138,13 @@ export default function DryIce({ className, intensity = 0.2, scale = 0.5 }) {
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     }
 
+    // Slow fog does not need 60 frames a second: drawing every other frame halves the GPU work and looks the same
+    let last = 0
     const loop = (now) => {
-      draw(now)
       frame = requestAnimationFrame(loop)
+      if (now - last < 30) return
+      last = now
+      draw(now)
     }
 
     const start = () => {
@@ -158,11 +162,15 @@ export default function DryIce({ className, intensity = 0.2, scale = 0.5 }) {
     }
     const onVisibility = () => (document.hidden ? stop() : start())
 
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting
-      if (visible) start()
-      else stop()
-    })
+    // The fog only runs once a clear strip of it is on screen, not when it merely grazes the bottom edge
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting
+        if (visible) start()
+        else stop()
+      },
+      { rootMargin: '0px 0px -48px 0px' },
+    )
     observer.observe(canvas)
 
     draw(performance.now())

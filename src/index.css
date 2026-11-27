@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -207,7 +206,6 @@ button:not(:disabled):active {
 
 .road-dash {
   background-image: repeating-linear-gradient(90deg, #FFB703 0 56px, transparent 56px 112px);
-  animation: drive 3s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -233,7 +231,6 @@ button:not(:disabled):active {
 
 .smoke-plume {
   animation: smokeRise 20s ease-out infinite;
-  will-change: transform, opacity;
 }
 
 @keyframes wispRise {
@@ -252,7 +249,6 @@ button:not(:disabled):active {
 
 .smoke-wisp {
   animation: wispRise 12s ease-out infinite;
-  will-change: transform, opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -317,7 +313,6 @@ button:not(:disabled):active {
 
 .ember-lane {
   animation: emberLane 11s ease-out infinite;
-  will-change: transform, opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -380,3 +375,250 @@ p, li { text-wrap: pretty; }
 
 /* Opens the gap between words in very large italic caps, where the default space looks tight */
 .word-wide { word-spacing: 0.14em; }
+
+/* ------------------------------------------------------------------------------------------------
+   Performance: every looping animation is transform and opacity only, so it runs on the GPU
+   with no main thread work, and it pauses itself while off screen (see usePauseOffscreen).
+   ------------------------------------------------------------------------------------------------ */
+[data-paused='true'],
+[data-paused='true'] * {
+  animation-play-state: paused !important;
+}
+
+/* The endless strip: two identical halves, so sliding by half its width loops without a seam */
+@keyframes tickerSlide {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.ticker-track {
+  animation: tickerSlide var(--ticker-duration, 45s) linear infinite;
+  will-change: transform;
+}
+
+.ticker-track.is-reverse {
+  animation-direction: reverse;
+}
+
+/* The dashed centre line of the road sign, drifting past. A slide, not a background shift, so it never repaints. */
+@keyframes driveSlide {
+  to {
+    transform: translate3d(-112px, 0, 0);
+  }
+}
+
+.road-dash-track {
+  animation: driveSlide 3s linear infinite;
+}
+
+/* The flame bro: he bobs with the fire and breathes at his own pace */
+@keyframes flameBob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, var(--bob, -2.83%), 0);
+  }
+}
+
+@keyframes flameBreathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(0.99, 1.025);
+  }
+  50% {
+    transform: scale(1.01, 0.985);
+  }
+  75% {
+    transform: scale(0.992, 1.02);
+  }
+}
+
+.fb-bob {
+  animation: flameBob 3.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.fb-breathe {
+  transform-origin: 50% 93%;
+  animation: flameBreathe 1.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Smoke off the tip of his head: each puff starts small right at the tip, swells, sways, cools and fades */
+@keyframes fbPuff {
+  0% {
+    transform: translate3d(0, 0, 0) scale(var(--s0));
+    opacity: 0;
+  }
+  30% {
+    transform: translate3d(calc(var(--dx) * 0.4), calc(var(--dy) * 0.45), 0) scale(0.6);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(var(--dx), var(--dy), 0) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes fbWarm {
+  0% {
+    transform: translate3d(0, 0, 0) scale(var(--s0));
+    opacity: 0;
+  }
+  50% {
+    transform: translate3d(var(--mx), var(--my), 0) scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(var(--dx), var(--dy), 0) scale(1);
+    opacity: 0;
+  }
+}
+
+.fb-puff,
+.fb-warm {
+  position: absolute;
+  border-radius: 9999px;
+  opacity: 0;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
+}
+
+.fb-puff {
+  animation-name: fbPuff;
+  animation-duration: 5.6s;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.85), rgba(233, 228, 223, 0.32) 55%, rgba(207, 200, 194, 0));
+}
+
+.fb-warm {
+  animation-name: fbWarm;
+  animation-duration: 2.6s;
+  background: radial-gradient(closest-side, rgba(255, 201, 160, 0.9), rgba(255, 138, 77, 0.35) 50%, rgba(255, 106, 19, 0));
+}
+
+/* The sauce bottle on its turntable */
+@keyframes turntable {
+  0%,
+  100% {
+    transform: perspective(900px) translate3d(0, 0, 0) rotateY(-38deg);
+  }
+  50% {
+    transform: perspective(900px) translate3d(0, -8px, 0) rotateY(38deg);
+  }
+}
+
+.turntable {
+  animation: turntable 9s ease-in-out infinite;
+}
+
+/* The badge, alive: rays that turn, coals that breathe, embers that float up, a flame bro that bobs */
+@keyframes badgeCoal {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  75% {
+    opacity: 1;
+  }
+}
+
+@keyframes badgeEmber {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate3d(var(--ex), var(--ey), 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--ex2), var(--ey2), 0);
+    opacity: 0;
+  }
+}
+
+.badge-rays {
+  animation: spinSlow 90s linear infinite;
+}
+
+.badge-coal {
+  animation: badgeCoal 1.8s ease-in-out infinite;
+}
+
+.badge-ember {
+  position: absolute;
+  border-radius: 9999px;
+  background: #ff6a13;
+  box-shadow: 0 0 0 0.5px #14100e;
+  opacity: 0;
+  animation: badgeEmber var(--dur, 3s) ease-out infinite;
+  animation-delay: var(--delay, 0s);
+  animation-fill-mode: backwards;
+}
+
+/* The scroll cue on the home page */
+@keyframes cueBob {
+  0%,
+  100% {
+    transform: translate3d(0, -3px, 0);
+  }
+  50% {
+    transform: translate3d(0, 4px, 0);
+  }
+}
+
+@keyframes cueSweep {
+  from {
+    transform: translate3d(0, var(--from, -20px), 0);
+  }
+  to {
+    transform: translate3d(0, var(--to, 38px), 0);
+  }
+}
+
+.cue-bob {
+  animation: cueBob 1.8s ease-in-out infinite;
+}
+
+.cue-sweep {
+  animation: cueSweep 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track,
+  .road-dash-track,
+  .fb-bob,
+  .fb-breathe,
+  .fb-puff,
+  .fb-warm,
+  .turntable,
+  .badge-rays,
+  .badge-coal,
+  .badge-ember,
+  .cue-bob,
+  .cue-sweep {
+    animation: none;
+  }
+
+  .fb-puff,
+  .fb-warm,
+  .badge-ember {
+    display: none;
+  }
+}

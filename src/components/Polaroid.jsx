@@ -2,7 +2,7 @@ import { cn } from '../lib/cn'
 
 // A framed photo print with a small caption under it. At rest it is calm and a little moody;
 // under the pointer the food lights up: brighter, richer, a warm glow along the edge and a slow push in.
-export default function Polaroid({ src, alt, caption, className, imgClassName }) {
+export default function Polaroid({ src, alt, caption, className, imgClassName, priority = false }) {
   return (
     <figure
       className={cn(
@@ -14,7 +14,8 @@ export default function Polaroid({ src, alt, caption, className, imgClassName })
         <img
           src={src}
           alt={alt}
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : 'auto'}
           decoding="async"
           className={cn(
             'aspect-square w-full object-cover transition-[filter,transform] duration-700 ease-out [filter:saturate(1.12)_contrast(1.05)_brightness(1.06)] group-hover/print:scale-[1.06] group-hover/print:[filter:saturate(1.38)_contrast(1.08)_brightness(1.32)]',

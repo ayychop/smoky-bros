@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { cn } from '../lib/cn'
+import usePauseOffscreen from '../lib/usePauseOffscreen'
 
 // The roadside theme, kept quiet and premium: an exit marker above each section, a mile marker and a thin road stripe. Together they say you pulled off the long road for the best BBQ.
 
@@ -62,9 +63,13 @@ export function MileMarker({ place = 'Your place', note = 'We bring the fire to 
 
 // A strip of tarmac with a fine dashed centre line that slowly drives past
 export function RoadLine({ className }) {
+  const paused = usePauseOffscreen()
   return (
-    <div aria-hidden="true" className={cn('relative h-6 w-full overflow-hidden border-y border-white/10 bg-black', className)}>
-      <div className="road-dash absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 opacity-80" />
+    <div ref={paused} aria-hidden="true" className={cn('relative h-6 w-full overflow-hidden border-y border-white/10 bg-black', className)}>
+      <div className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 overflow-hidden opacity-80">
+        {/* One dash cycle wider than the strip, slid left by exactly one cycle, so the loop never shows a seam */}
+        <div className="road-dash road-dash-track absolute left-0 top-0 h-full w-[calc(100%+112px)]" />
+      </div>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useBootDone } from '../boot'
@@ -47,6 +47,11 @@ export default function Hero() {
   const { scrollY } = useScroll()
   const cueOpacity = useTransform(scrollY, [0, 120], [1, 0])
   const cuePointer = useTransform(scrollY, (y) => (y > 100 ? 'none' : 'auto'))
+  const cueRef = useRef(null)
+  // Once the cue has faded away its loops stop too
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    if (cueRef.current) cueRef.current.dataset.paused = y > 120 ? 'true' : 'false'
+  })
   const nudge = () => ref.current?.nextElementSibling && scrollToTarget(ref.current.nextElementSibling)
   const broY = useTransform(scrollYProgress, [0, 1], [0, -70])
   const broScale = useTransform(scrollYProgress, [0, 1], [1, 1.12])
@@ -102,13 +107,13 @@ export default function Hero() {
           >
             <span aria-hidden="true" className="-mx-2 inline-flex overflow-hidden whitespace-nowrap px-2 pb-4 pr-4 text-[2.7rem] min-[420px]:text-5xl sm:text-6xl lg:text-7xl xl:text-[5rem]">
               {Array.from(SLOGAN.lead).map((char, index) => (
-                <motion.span key={index} variants={letter} className="inline-block will-change-transform">
+                <motion.span key={index} variants={letter} className="inline-block">
                   {char === ' ' ? '\u00A0' : char}
                 </motion.span>
               ))}
               <span className="inline-block">&nbsp;</span>
               {accentLetters.map((char, index) => (
-                <motion.span key={`a${index}`} variants={letter} className="inline-block will-change-transform" style={{ color: burn(index, accentLetters.length) }}>
+                <motion.span key={`a${index}`} variants={letter} className="inline-block" style={{ color: burn(index, accentLetters.length) }}>
                   {char}
                 </motion.span>
               ))}
@@ -165,18 +170,18 @@ export default function Hero() {
               >
                 {item.key === 'brisket' && (
                   <Link to="/#menu" aria-label="See the menu, brisket" className={`${PHOTO} ${ring}`}>
-                    <Polaroid src={SHOWCASE[0].image} alt={SHOWCASE[0].alt} caption="Brisket" imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
+                    <Polaroid src={SHOWCASE[0].image} alt={SHOWCASE[0].alt} caption="Brisket" priority imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
                   </Link>
                 )}
                 {item.key === 'wings' && (
                   <Link to="/#menu" aria-label="See the menu, wings" className={`${PHOTO} ${ring}`}>
-                    <Polaroid src={SHOWCASE[1].image} alt={SHOWCASE[1].alt} caption="Wings" imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
+                    <Polaroid src={SHOWCASE[1].image} alt={SHOWCASE[1].alt} caption="Wings" priority imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
                   </Link>
                 )}
                 {item.key === 'seal' && <BookSeal className="h-[4.75rem] w-[4.75rem] sm:h-24 sm:w-24 md:h-32 md:w-32" />}
                 {item.key === 'ribs' && (
                   <Link to="/#menu" aria-label="See the menu, ribs" className={`${PHOTO} ${ring}`}>
-                    <Polaroid src={SHOWCASE[3].image} alt={SHOWCASE[3].alt} caption="Ribs" imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
+                    <Polaroid src={SHOWCASE[3].image} alt={SHOWCASE[3].alt} caption="Ribs" priority imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
                   </Link>
                 )}
               </motion.div>
@@ -188,6 +193,7 @@ export default function Hero() {
       {/* Scroll cue. Small screens: a round arrow tucked in the corner, clear of the buttons. Big, tall screens: a
           line under the buttons, lined up with the headline. Either way it melts away as soon as they start scrolling. */}
       <motion.div
+        ref={cueRef}
         className="pointer-events-none fixed bottom-5 right-4 z-30 [@media(min-width:1024px)_and_(min-height:800px)]:inset-x-0 [@media(min-width:1024px)_and_(min-height:800px)]:right-0 [@media(min-width:1024px)_and_(min-height:800px)]:bottom-[4.75rem] [@media(min-width:1024px)_and_(min-height:800px)]:mx-auto [@media(min-width:1024px)_and_(min-height:800px)]:flex [@media(min-width:1024px)_and_(min-height:800px)]:max-w-7xl [@media(min-width:1024px)_and_(min-height:800px)]:justify-start [@media(min-width:1024px)_and_(min-height:800px)]:px-6"
         style={{ opacity: cueOpacity }}
       >
@@ -203,29 +209,16 @@ export default function Hero() {
         >
           {/* Phones */}
           <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-gold/50 bg-ink/80 shadow-[0_0_28px_-4px_rgba(255,183,3,0.45)] backdrop-blur [@media(min-width:1024px)_and_(min-height:800px)]:hidden">
-            <motion.svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="h-5 w-5 fill-none stroke-gold"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              animate={{ y: [-3, 4, -3] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-            >
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="cue-bob h-5 w-5 fill-none stroke-gold" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 5v13M6 13l6 6 6-6" />
-            </motion.svg>
+            </svg>
           </span>
           {/* Tablet and desktop */}
           <span className="font-cond hidden text-[0.7rem] uppercase tracking-[0.45em] text-white/70 transition-colors duration-300 group-hover:text-gold [@media(min-width:1024px)_and_(min-height:800px)]:block">
             Scroll to explore
           </span>
           <span aria-hidden="true" className="relative hidden h-9 w-px overflow-hidden bg-white/20 [@media(min-width:1024px)_and_(min-height:800px)]:block">
-            <motion.span
-              className="absolute inset-x-0 top-0 block h-5 bg-gradient-to-b from-transparent via-gold to-transparent"
-              animate={{ y: [-20, 38] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-            />
+            <span className="cue-sweep absolute inset-x-0 top-0 block h-5 bg-gradient-to-b from-transparent via-gold to-transparent" />
           </span>
         </motion.button>
       </motion.div>
@@ -233,7 +226,7 @@ export default function Hero() {
       <Spotlight />
 
       {/* A thin strip along the bottom, so the page never stops on empty space */}
-      <div className="relative z-10 border-y border-white/10 bg-black/60 py-4 backdrop-blur">
+      <div className="relative z-10 border-y border-white/10 bg-black/75 py-4">
         <Ticker label="Smoky Bros BBQ" duration={50}>
           {TICKER.map((text) => (
             <span key={text} className="font-cond flex shrink-0 items-center whitespace-nowrap text-base tracking-[0.3em] text-white/75 md:text-xl">

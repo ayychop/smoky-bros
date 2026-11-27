@@ -208,10 +208,9 @@ export default function BrandBoard() {
         >
           <span className="balance-track text-[0.7rem] font-semibold uppercase tracking-[0.45em] text-white/60 transition-colors duration-300 group-hover:text-[#FFB703]">Scroll to explore</span>
           <span aria-hidden="true" className="relative block h-14 w-px overflow-hidden bg-white/15">
-            <motion.span
-              className="absolute inset-x-0 top-0 block h-7 bg-gradient-to-b from-transparent via-[#FFB703] to-transparent"
-              animate={{ y: [-28, 56] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            <span
+              className="cue-sweep absolute inset-x-0 top-0 block h-7 bg-gradient-to-b from-transparent via-[#FFB703] to-transparent"
+              style={{ '--from': '-28px', '--to': '56px' }}
             />
           </span>
         </motion.button>

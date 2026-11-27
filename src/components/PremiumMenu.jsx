@@ -9,6 +9,7 @@ import SauceBottle from './SauceBottle'
 import Scallop from './Scallop'
 import FlameBro from './FlameBro'
 import Smoke from './Smoke'
+import usePauseOffscreen from '../lib/usePauseOffscreen'
 
 const MotionLink = motion.create(Link)
 
@@ -95,6 +96,7 @@ const HEAT = [
 ]
 
 function SauceCard() {
+  const paused = usePauseOffscreen()
   return (
     <motion.div
       className="flex min-h-[33rem] md:col-span-4 md:row-span-2 md:min-h-0"
@@ -135,17 +137,13 @@ function SauceCard() {
           </div>
 
           {/* The stage: a turntable with the bottle turning on it */}
-          <div className="relative flex h-[19rem] items-end justify-center [transform-style:preserve-3d] md:h-[30rem]" style={{ transform: 'translateZ(60px)' }}>
+          <div ref={paused} className="relative flex h-[19rem] items-end justify-center [transform-style:preserve-3d] md:h-[30rem]" style={{ transform: 'translateZ(60px)' }}>
             <div aria-hidden="true" className="absolute bottom-3 h-12 w-56 rounded-[50%] border border-sun/70 bg-[radial-gradient(closest-side,rgba(200,54,10,0.35),rgba(200,54,10,0.05))] shadow-[0_0_40px_-4px_rgba(200,54,10,0.6)] md:w-72" />
             <div aria-hidden="true" className="absolute bottom-[1.1rem] h-7 w-40 rounded-[50%] bg-black/60 blur-[3px] md:w-52" />
-            <motion.div
-              className="relative mb-9 h-60 will-change-transform md:h-[25rem]"
-              style={{ transformStyle: 'preserve-3d', transformPerspective: 900 }}
-              animate={{ rotateY: [-38, 38, -38], y: [0, -8, 0] }}
-              transition={{ duration: 9, ease: 'easeInOut', repeat: Infinity }}
-            >
+            {/* The turn is a CSS animation on a perspective transform, so it runs on the GPU and stops while off screen */}
+            <div className="turntable relative mb-9 h-60 will-change-transform md:h-[25rem]" style={{ transformStyle: 'preserve-3d' }}>
               <SauceBottle depth={26} className="h-full" />
-            </motion.div>
+            </div>
           </div>
         </div>
       </TiltCard>

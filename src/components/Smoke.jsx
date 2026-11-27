@@ -1,3 +1,5 @@
+import usePauseOffscreen from '../lib/usePauseOffscreen'
+
 // Smoke and embers drifting up behind a section, so the whole site feels like it sits over a live fire.
 // Drop it in as the first child of a section that has `relative isolate overflow-hidden`.
 // Positions are fixed numbers, so server and browser always draw the same thing.
@@ -32,9 +34,11 @@ const EMBERS = [
 export default function Smoke({ tone = 'dark', plumes = 3, embers, wisps, className = '' }) {
   const billow = tone === 'dark' ? 'rgba(255,255,255,0.09)' : 'rgba(20,16,14,0.06)'
   const sparks = embers ?? (tone === 'dark' ? 8 : 0)
+  // Nothing drifts while the section is off screen
+  const paused = usePauseOffscreen()
 
   return (
-    <div aria-hidden="true" className={`pointer-events-none absolute inset-0 -z-10 overflow-hidden ${className}`}>
+    <div ref={paused} aria-hidden="true" className={`pointer-events-none absolute inset-0 -z-10 overflow-hidden ${className}`}>
       {PLUMES.slice(0, plumes).map((plume) => (
         <span
           key={plume.left}

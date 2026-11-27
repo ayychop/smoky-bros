@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useId } from 'react'
+import usePauseOffscreen from '../lib/usePauseOffscreen'
 
 // The Smoky Bros mascot: a flame in sunglasses with a big grin. He works on his own, as a sticker,
 // and he is also the face of the badge in Logo.
@@ -19,55 +20,54 @@ const PUFFS = Array.from({ length: 14 }, (_, i) => ({
   rise: 84 + (i % 3) * 12,
   grow: 22 + (i % 4) * 3,
 }))
-const PUFF_TIME = 5.6
 
-export function SmokeColumn({ uid, x = 104, y = 2 }) {
-  const warm = `smokeWarm${uid}`
-  const cool = `smokeCool${uid}`
+// The mascot's box, in the units his drawing is made in. Every layer below is placed against it in percentages.
+const VIEW = { x: 22, y: -12, w: 162, h: 212 }
+const TIP = { x: 104, y: 2 }
+const pct = (value, of) => `${(value / of) * 100}%`
+
+// Smoke is drawn as plain elements rather than SVG shapes. An SVG that animates its own insides has to be
+// repainted in full on every frame; an element that only moves and fades is handed to the GPU once and left alone.
+function puffStyle(puff) {
+  const size = puff.grow * 2
+  return {
+    left: pct(TIP.x - VIEW.x - puff.grow, VIEW.w),
+    top: pct(TIP.y - VIEW.y - puff.grow, VIEW.h),
+    width: pct(size, VIEW.w),
+    aspectRatio: '1',
+    animationDelay: `${puff.delay}s`,
+    '--s0': 5 / puff.grow,
+    '--dx': pct(puff.sway, size),
+    '--dy': pct(-puff.rise, size),
+  }
+}
+
+function warmStyle(puff, index) {
+  const size = 30
+  return {
+    left: pct(TIP.x - VIEW.x - 15, VIEW.w),
+    top: pct(TIP.y + 2 - VIEW.y - 15, VIEW.h),
+    width: pct(size, VIEW.w),
+    aspectRatio: '1',
+    animationDelay: `${index * 0.52}s`,
+    '--s0': 2 / 15,
+    '--mx': pct(puff.sway * 0.2, size),
+    '--my': pct(-18, size),
+    '--dx': pct(puff.sway * 0.35, size),
+    '--dy': pct(-36, size),
+  }
+}
+
+function SmokeColumn() {
   return (
-    <g aria-hidden="true">
-      <defs>
-        <radialGradient id={warm}>
-          <stop offset="0" stopColor="#FFC9A0" stopOpacity="0.9" />
-          <stop offset="0.5" stopColor="#FF8A4D" stopOpacity="0.35" />
-          <stop offset="1" stopColor="#FF6A13" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id={cool}>
-          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.85" />
-          <stop offset="0.55" stopColor="#E9E4DF" stopOpacity="0.32" />
-          <stop offset="1" stopColor="#CFC8C2" stopOpacity="0" />
-        </radialGradient>
-      </defs>
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
       {PUFFS.map((puff, index) => (
-        <motion.circle
-          key={index}
-          fill={`url(#${cool})`}
-          initial={{ opacity: 0, cx: x, cy: y, r: 5 }}
-          animate={{
-            cx: [x, x + puff.sway * 0.4, x + puff.sway],
-            cy: [y, y - puff.rise * 0.45, y - puff.rise],
-            r: [5, puff.grow * 0.6, puff.grow],
-            opacity: [0, 0.85, 0],
-          }}
-          transition={{ duration: PUFF_TIME, delay: puff.delay, ease: 'easeOut', repeat: Infinity, times: [0, 0.3, 1] }}
-        />
+        <span key={index} className="fb-puff" style={puffStyle(puff)} />
       ))}
-      {/* A warm glow where the smoke is still hot, right above the tip */}
       {PUFFS.slice(0, 5).map((puff, index) => (
-        <motion.circle
-          key={`warm${index}`}
-          fill={`url(#${warm})`}
-          initial={{ opacity: 0, cx: x, cy: y, r: 3 }}
-          animate={{
-            cx: [x, x + puff.sway * 0.2, x + puff.sway * 0.35],
-            cy: [y + 2, y - 16, y - 34],
-            r: [2, 9, 15],
-            opacity: [0, 0.8, 0],
-          }}
-          transition={{ duration: 2.6, delay: index * 0.52, ease: 'easeOut', repeat: Infinity }}
-        />
+        <span key={`warm${index}`} className="fb-warm" style={warmStyle(puff, index)} />
       ))}
-    </g>
+    </div>
   )
 }
 
@@ -145,31 +145,68 @@ export function FlameBroArt({ uid, alive = false, sticker = false }) {
  */
 export default function FlameBro({ className = 'h-48 w-auto', alive = true, smoke = alive, sticker = false, glow = true }) {
   const uid = useId().replace(/:/g, '')
+  const paused = usePauseOffscreen()
 
+  // Standing still: one plain drawing, painted once
+  if (!alive && !smoke) {
+    return (
+      <svg
+        viewBox="22 -12 162 212"
+        role="img"
+        aria-label="The Smoky Bros flame mascot in sunglasses"
+        shapeRendering="geometricPrecision"
+        className={className}
+        fill="none"
+        overflow="visible"
+      >
+        {glow && (
+          <>
+            <defs>
+              <radialGradient id={`aura${uid}`} cx="0.5" cy="0.55" r="0.5">
+                <stop offset="0" stopColor="#FF5A1F" stopOpacity="0.5" />
+                <stop offset="0.6" stopColor="#D92B0B" stopOpacity="0.14" />
+                <stop offset="1" stopColor="#D92B0B" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <ellipse cx="103" cy="100" rx="150" ry="170" fill={`url(#aura${uid})`} aria-hidden="true" />
+          </>
+        )}
+        <FlameBroArt uid={uid} alive={false} sticker={sticker} />
+      </svg>
+    )
+  }
+
+  // Alive: the drawing never changes, so it is painted once and the GPU does the bobbing and breathing.
+  // The smoke and the glow sit behind him as their own layers. The wrapper takes its width from the drawing.
   return (
-    <svg
-      viewBox="22 -12 162 212"
-      role="img"
-      aria-label="The Smoky Bros flame mascot in sunglasses"
-      shapeRendering="geometricPrecision"
-      className={className}
-      fill="none"
-      overflow="visible"
-    >
-      {smoke && <SmokeColumn uid={uid} />}
+    <div ref={paused} className={`${/\b(absolute|fixed|sticky)\b/.test(className) ? '' : 'relative'} ${className}`} style={{ width: 'fit-content' }}>
+      {smoke && <SmokeColumn />}
       {glow && (
-        <>
-          <defs>
-            <radialGradient id={`aura${uid}`} cx="0.5" cy="0.55" r="0.5">
-              <stop offset="0" stopColor="#FF5A1F" stopOpacity="0.5" />
-              <stop offset="0.6" stopColor="#D92B0B" stopOpacity="0.14" />
-              <stop offset="1" stopColor="#D92B0B" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <ellipse cx="103" cy="100" rx="150" ry="170" fill={`url(#aura${uid})`} aria-hidden="true" />
-        </>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute"
+          style={{
+            left: pct(103 - 150 - VIEW.x, VIEW.w),
+            top: pct(100 - 170 - VIEW.y, VIEW.h),
+            width: pct(300, VIEW.w),
+            height: pct(340, VIEW.h),
+            background: 'radial-gradient(50% 50% at 50% 55%, rgba(255,90,31,0.5) 0%, rgba(217,43,11,0.14) 60%, rgba(217,43,11,0) 100%)',
+          }}
+        />
       )}
-      <FlameBroArt uid={uid} alive={alive} sticker={sticker} />
-    </svg>
+      <div className={`relative h-full ${alive ? 'fb-bob' : ''}`}>
+        <svg
+          viewBox="22 -12 162 212"
+          role="img"
+          aria-label="The Smoky Bros flame mascot in sunglasses"
+          shapeRendering="geometricPrecision"
+          className={`block h-full w-auto ${alive ? 'fb-breathe' : ''}`}
+          fill="none"
+          overflow="visible"
+        >
+          <FlameBroArt uid={uid} alive={false} sticker={sticker} />
+        </svg>
+      </div>
+    </div>
   )
 }
