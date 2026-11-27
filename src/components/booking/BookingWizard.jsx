@@ -15,7 +15,7 @@ import BookingSummary from './BookingSummary'
 const STEPS = [
   { label: 'Event', title: 'What are we cooking for?' },
   { label: 'Date', title: 'When and where?' },
-  { label: 'Menu', title: 'What are we lighting up?' },
+  { label: 'Menu', title: 'What are we cooking up?' },
   { label: 'You', title: 'Who are we cooking for?' },
 ]
 const LAST = STEPS.length - 1
@@ -61,38 +61,53 @@ const slide = {
   exit: (direction) => ({ opacity: 0, x: direction * -48 }),
 }
 
-function Stepper({ step }) {
+function Stepper({ step, complete, furthest, onGo }) {
   return (
     <ol className="mb-10 flex items-center" aria-label="Booking progress">
       {STEPS.map((item, index) => {
-        const done = index < step
         const current = index === step
+        const done = complete[index] && !current
+        const locked = index > furthest
         return (
-          <li key={item.label} className="flex flex-1 items-center last:flex-none" aria-current={current ? 'step' : undefined}>
-            <span className="flex items-center gap-3">
+          <li key={item.label} className="flex flex-1 items-center last:flex-none">
+            <button
+              type="button"
+              onClick={() => onGo(index)}
+              aria-current={current ? 'step' : undefined}
+              aria-disabled={locked || undefined}
+              aria-label={`${locked ? 'Locked, finish the earlier steps first. ' : ''}Step ${index + 1}, ${item.label}${done ? ', completed' : ''}`}
+              title={locked ? 'Finish the earlier steps first' : `Go to ${item.label}`}
+              className={`group flex items-center gap-3 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember ${
+                locked ? 'cursor-not-allowed' : current ? 'cursor-default' : 'cursor-pointer'
+              }`}
+            >
               <span
                 className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm font-extrabold transition-all duration-500 ${
- current
+                  current
                     ? 'border-ink bg-chili text-cream shadow-sticker'
                     : done
-                      ? 'border-ink bg-sun text-ink'
-                      : 'border-ink/30 bg-white text-ink/40'
+                      ? 'border-ink bg-sun text-ink group-hover:-translate-y-0.5 group-hover:shadow-sticker'
+                      : locked
+                        ? 'border-ink/25 bg-white text-ink/35'
+                        : 'border-ink/60 bg-white text-ink group-hover:-translate-y-0.5 group-hover:border-ink group-hover:shadow-sticker'
                 }`}
               >
                 {index + 1}
               </span>
               <span
-                className={`hidden text-xs font-extrabold uppercase tracking-[0.2em] sm:block ${current ? 'text-ink' : 'text-ink/45'}`}
+                className={`hidden text-xs font-extrabold uppercase tracking-[0.2em] transition-colors duration-300 sm:block ${
+                  current ? 'text-ink' : locked ? 'text-ink/35' : 'text-ink/60 group-hover:text-ink'
+                }`}
               >
                 {item.label}
               </span>
-            </span>
+            </button>
             {index < LAST && (
-              <span className="relative mx-3 h-1 flex-1 rounded-full bg-ink/15 sm:mx-5">
+              <span aria-hidden="true" className="relative mx-3 h-1 flex-1 rounded-full bg-ink/15 sm:mx-5">
                 <motion.span
                   className="absolute inset-0 origin-left rounded-full bg-chili"
                   initial={false}
-                  animate={{ scaleX: done ? 1 : 0 }}
+                  animate={{ scaleX: complete[index] ? 1 : 0 }}
                   transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
                 />
               </span>
@@ -181,7 +196,25 @@ export default function BookingWizard() {
 
   const goTo = (next) => {
     setDirection(next > step ? 1 : -1)
+    setErrors({})
     setStep(next)
+  }
+
+  // A step is complete when it has no validation errors. You can always go back, and you can
+  // jump forward as far as the first step that is still missing something.
+  const complete = STEPS.map((_, index) => !Object.values(validate(index, data)).some(Boolean))
+  let furthest = 0
+  while (furthest < LAST && complete[furthest]) furthest += 1
+
+  const handleStepClick = (target) => {
+    if (target === step) return
+    if (target < step || target <= furthest) {
+      goTo(target)
+      return
+    }
+    // Locked: show what is missing here, or take them to the first incomplete step
+    if (furthest === step) setErrors(validate(step, data))
+    else goTo(furthest)
   }
 
   const handleNext = () => {
@@ -229,7 +262,7 @@ export default function BookingWizard() {
     <section className="mx-auto max-w-6xl px-6">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-14">
         <div ref={topRef} className="scroll-mt-32">
-          <Stepper step={step} />
+          <Stepper step={step} complete={complete} furthest={furthest} onGo={handleStepClick} />
 
           <form noValidate onSubmit={handleSubmit}>
             <AnimatePresence mode="wait" custom={direction} initial={false}>
