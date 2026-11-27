@@ -3,12 +3,12 @@ import { ArrowLeft } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { EASE_OUT_EXPO } from '../easing'
-import { BadgeMark, CrownMark, MonolithMark } from './BrandMarks'
+import FlameBro from './FlameBro'
+import Logo from './Logo'
 
 const MARKS = [
-  { id: 'monolith', numeral: 'I', name: 'The Monolith', note: 'A crest that carries the whole brand on one chest plate', Mark: MonolithMark },
-  { id: 'crown', numeral: 'II', name: 'The Crown', note: 'Five flames for five points. Royalty of the pit', Mark: CrownMark },
-  { id: 'badge', numeral: 'III', name: 'The Badge', note: 'The roadside seal, built to sit on a trailer or a jar', Mark: BadgeMark },
+  { id: 'main', numeral: 'I', name: 'The Main Logo', note: 'The badge. For the trailer, the menu board and anywhere we sign our name', Mark: Logo, markClass: 'h-full w-full' },
+  { id: 'second', numeral: 'II', name: 'The Second Logo', note: 'The flame bro. For the playful moments, the socials and the stickers', Mark: FlameBro, markClass: 'h-[80%] w-auto' },
 ]
 
 const COLOURS = [
@@ -126,23 +126,23 @@ export default function BrandBoard() {
       </header>
 
       {/* The logos */}
-      <Slide eyebrow="The marks" title="Three ways to wear the fire">
-        <div className="grid gap-6 md:grid-cols-3">
-          {MARKS.map(({ id, numeral, name, note, Mark }, index) => (
+      <Slide eyebrow="The marks" title="Two ways to wear the fire">
+        <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
+          {MARKS.map(({ id, numeral, name, note, Mark, markClass }, index) => (
             <motion.figure
               key={id}
               {...reveal}
               transition={{ ...reveal.transition, delay: index * 0.12 }}
               className="group flex flex-col items-center rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] px-8 pb-10 pt-12 text-center transition-colors duration-500 hover:border-[#FFB703]/40"
             >
-              <div className="relative flex h-56 w-56 items-center justify-center md:h-52 md:w-52 lg:h-60 lg:w-60">
+              <div className="relative flex h-64 w-64 items-center justify-center md:h-72 md:w-72">
                 <div aria-hidden="true" className="absolute inset-0 rounded-full bg-[#C8360A]/25 opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
-                <Mark className="relative h-full w-full transition-transform duration-700 ease-out group-hover:scale-105" />
+                <Mark className={`relative transition-transform duration-700 ease-out group-hover:scale-105 ${markClass}`} />
               </div>
               <figcaption className="mt-10">
                 <p className="balance-track text-xs font-semibold uppercase tracking-[0.4em] text-[#FFB703]">{numeral}</p>
                 <p className="mt-3 font-display text-2xl text-[#F5F5F5]">{name}</p>
-                <p className="mx-auto mt-3 max-w-[16rem] text-sm leading-relaxed text-white/50">{note}</p>
+                <p className="mx-auto mt-3 max-w-[17rem] text-balance text-sm leading-relaxed text-white/50">{note}</p>
               </figcaption>
             </motion.figure>
           ))}
