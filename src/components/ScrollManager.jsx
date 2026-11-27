@@ -7,7 +7,7 @@ const TITLES = {
   '/services': 'Services | Smoky Bros BBQ',
   '/book': 'Book an Event | Smoky Bros BBQ',
   '/enquiry': 'Enquiries | Smoky Bros BBQ',
-  '/brand': 'Brand Board | Smoky Bros BBQ',
+  '/brand': 'Brand Identity | Smoky Bros BBQ',
 }
 
 // Resets scroll on every route change, and lands on #anchors when the URL has one.

@@ -369,3 +369,6 @@ button[class*="rounded-full"][class*="uppercase"][class*="tracking-["]:not([clas
 /* Typesetting care: headings break into even lines, paragraphs avoid leaving a single word alone on the last line */
 h1, h2, h3, .font-display, .font-lead { text-wrap: balance; }
 p, li { text-wrap: pretty; }
+
+/* Opens the gap between words in very large italic caps, where the default space looks tight */
+.word-wide { word-spacing: 0.14em; }

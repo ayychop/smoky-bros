@@ -12,7 +12,7 @@ export default function Footer() {
     <footer className="ember-glow relative isolate z-10 overflow-hidden bg-ink text-center text-white">
       <Smoke tone="dark" plumes={4} wisps={4} />
       <RoadLine />
-      <div className="px-6 pb-12 pt-12">
+      <div className="px-6 pb-16 pt-12">
       <div className="relative z-10">
         <Logo className="mx-auto mb-6 h-28 w-28" />
         <p className="font-marker balance-track text-base text-sun">Based in Maidenhead, Berkshire, UK</p>
@@ -50,6 +50,12 @@ export default function Footer() {
         <p className="mt-10 text-sm text-white/40">© {year} Smoky Bros BBQ. All rights reserved</p>
         </div>
       </div>
+      <Link
+        to="/brand"
+        className="absolute bottom-3 right-4 z-10 text-[0.65rem] uppercase tracking-[0.2em] text-white/25 transition-colors duration-300 before:absolute before:-inset-3 before:content-[''] hover:text-white/60 focus-visible:text-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sun"
+      >
+        Brand Identity
+      </Link>
     </footer>
   )
 }
