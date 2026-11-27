@@ -11,7 +11,7 @@ const ring = 'focus-visible:outline focus-visible:outline-2 focus-visible:outlin
 export default function BookingCTA({ title = 'Your event, our fire' }) {
   return (
     <section className="relative isolate overflow-hidden bg-ink px-6 pb-20 pt-24 text-center text-white">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_50%_100%,rgba(255,90,31,0.4),transparent_70%),radial-gradient(40%_40%_at_50%_0%,rgba(217,43,11,0.25),transparent_70%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_50%_100%,rgba(200,54,10,0.4),transparent_70%),radial-gradient(40%_40%_at_50%_0%,rgba(200,54,10,0.25),transparent_70%)]" />
       <Smoke tone="dark" plumes={4} wisps={4} />
       <Scallop />
       <Reveal className="relative mx-auto max-w-3xl">

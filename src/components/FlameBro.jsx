@@ -151,6 +151,7 @@ export default function FlameBro({ className = 'h-48 w-auto', alive = true, smok
       viewBox="22 -12 162 212"
       role="img"
       aria-label="The Smoky Bros flame mascot in sunglasses"
+      shapeRendering="geometricPrecision"
       className={className}
       fill="none"
       overflow="visible"

@@ -88,7 +88,7 @@ export default function OriginStory() {
           <motion.div whileTap={{ scale: 0.95 }} className="mt-8 inline-block">
             <Link
               to="/services"
-              className="group inline-flex items-center gap-3 rounded-full bg-ink px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-chili focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sun"
+              className="group inline-flex items-center gap-3 rounded-full bg-ink px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-chili focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
             >
               Explore our services
               <ArrowRight size={16} aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1" />

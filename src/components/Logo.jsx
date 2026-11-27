@@ -56,6 +56,8 @@ export default function Logo({
       viewBox="-6 -6 252 252"
       role="img"
       aria-label="Smoky Bros BBQ, slow smoked"
+      shapeRendering="geometricPrecision"
+      textRendering="geometricPrecision"
       className={className}
       fill="none"
       overflow="visible"

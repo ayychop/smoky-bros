@@ -74,15 +74,15 @@ export default function Navbar() {
     <>
       {/* Framer owns the transform, so the horizontal centring lives in x rather than a translate class */}
       <motion.header
-        className="fixed left-1/2 top-4 z-50 flex w-[92%] max-w-5xl items-center justify-between rounded-full border border-white/15 bg-ink/75 py-1.5 pl-3 pr-2.5 shadow-sticker backdrop-blur-xl sm:pl-4 sm:pr-3"
-        initial={{ opacity: 0, x: '-50%', y: -24 }}
-        animate={{ opacity: ready ? 1 : 0, x: '-50%', y: !ready ? -24 : hidden && !open ? -130 : 0 }}
+        className="fixed inset-x-0 top-4 z-50 mx-auto flex w-[calc(100%-2rem)] max-w-5xl sm:w-[calc(100%-3rem)] items-center justify-between rounded-full border border-white/15 bg-ink/75 py-1.5 pl-3 pr-2.5 shadow-sticker backdrop-blur-xl sm:pl-4 sm:pr-3"
+        initial={{ opacity: 0, y: -24 }}
+        animate={{ opacity: ready ? 1 : 0, y: !ready ? -24 : hidden && !open ? -130 : 0 }}
         transition={{ duration: 0.7, delay: ready && !hidden ? 0.2 : 0, ease: EASE_OUT_EXPO }}
       >
         <Link to="/" aria-label="Smoky Bros BBQ, home" className={`group flex shrink-0 items-center gap-1.5 sm:gap-2 ${focusRing}`}>
           {/* The badge with a slow gleam that crosses it every few seconds, like light catching polished metal */}
           <span className="relative -my-2 block h-12 w-12 shrink-0 min-[400px]:h-14 min-[400px]:w-14 transition-transform duration-300 group-hover:scale-105 sm:-my-3 sm:h-16 sm:w-16">
-            <Logo className="h-full w-full drop-shadow-[0_6px_14px_rgba(0,0,0,0.5)]" />
+            <Logo className="h-full w-full" />
             <span aria-hidden="true" className="pointer-events-none absolute inset-[3.5%] overflow-hidden rounded-full">
               <span className="nav-gleam absolute inset-y-0 -left-1/2 w-1/2" />
             </span>

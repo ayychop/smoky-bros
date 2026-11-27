@@ -82,7 +82,7 @@ function Doorway({ who, label, note, cta, to, image }) {
       {/* Firelight rising off the bottom edge on hover */}
       <span
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-3/5 bg-[radial-gradient(70%_100%_at_50%_100%,rgba(255,90,31,0.55),transparent)] opacity-50 transition-opacity duration-700 group-hover:opacity-100"
+        className="absolute inset-x-0 bottom-0 h-3/5 bg-[radial-gradient(70%_100%_at_50%_100%,rgba(200,54,10,0.55),transparent)] opacity-50 transition-opacity duration-700 group-hover:opacity-100"
       />
       {/* A thin inner arch, like the frame of a doorway */}
       <span aria-hidden="true" className="absolute inset-2 rounded-b-xl rounded-t-[999px] border border-white/25 transition-colors duration-500 group-hover:border-sun/80" />

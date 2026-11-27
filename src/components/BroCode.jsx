@@ -12,7 +12,7 @@ const LEAN = [15, 5, -5, -15]
 export default function BroCode() {
   return (
     <section aria-labelledby="smoky-code" className="relative isolate overflow-hidden bg-ink px-6 pb-16 pt-20 text-white md:pb-24 md:pt-24">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_60%_at_50%_0%,rgba(217,43,11,0.38),transparent_70%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_60%_at_50%_0%,rgba(200,54,10,0.38),transparent_70%)]" />
       <Smoke tone="dark" plumes={3} wisps={3} />
       <Scallop />
       <div className="relative mx-auto max-w-6xl">

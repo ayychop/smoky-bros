@@ -10,7 +10,7 @@ import Smoke from './Smoke'
 const BURST = Array.from({ length: 16 }, (_, i) => {
   const angle = (i / 16) * Math.PI * 2 + (i % 2) * 0.18
   const distance = 150 + (i % 4) * 40
-  return { x: Math.cos(angle) * distance, y: Math.sin(angle) * distance * 0.8, size: 8 + (i % 3) * 4, color: i % 2 ? '#D92B0B' : '#FF6A13' }
+  return { x: Math.cos(angle) * distance, y: Math.sin(angle) * distance * 0.8, size: 8 + (i % 3) * 4, color: i % 2 ? '#C8360A' : '#FFB703' }
 })
 
 // Once per session: a sunburst swells, the badge pops in piece by piece, the tagline arrives
@@ -51,7 +51,7 @@ export default function BootLoader() {
           <motion.div
             aria-hidden="true"
             className="absolute left-1/2 top-1/2 h-[120vmax] w-[120vmax] will-change-transform"
-            style={{ x: '-50%', y: '-50%', background: 'radial-gradient(closest-side, rgba(255,90,31,0.4), rgba(217,43,11,0.14) 45%, transparent 70%)' }}
+            style={{ x: '-50%', y: '-50%', background: 'radial-gradient(closest-side, rgba(200,54,10,0.4), rgba(200,54,10,0.14) 45%, transparent 70%)' }}
             initial={{ scale: 0.05, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 2.2, delay: 0.1, ease: EASE_OUT_EXPO }}
@@ -79,7 +79,7 @@ export default function BootLoader() {
             >
               <div className="relative isolate h-60 w-60 sm:h-80 sm:w-80 md:h-[24rem] md:w-[24rem]">
                 <BadgeSmoke />
-                <Logo alive className="relative z-10 h-full w-full drop-shadow-[0_20px_50px_rgba(255,90,31,0.35)]" />
+                <Logo alive className="relative z-10 h-full w-full" />
               </div>
             </motion.div>
 

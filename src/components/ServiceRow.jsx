@@ -41,7 +41,7 @@ export default function ServiceRow({ service, flip }) {
         <ul className="mt-6 space-y-3">
           {service.includes.map((item) => (
             <li key={item} className="flex items-start gap-3 text-base text-ink">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sun/15 text-sun">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ember/10 text-ember">
                 <Check size={13} strokeWidth={2.5} aria-hidden="true" />
               </span>
               {item}
@@ -53,7 +53,7 @@ export default function ServiceRow({ service, flip }) {
           <MagneticButton>
             <Link
               to={service.cta.to}
-              className="inline-flex items-center justify-center rounded-full bg-chili px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame hover:shadow-ember focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sun"
+              className="inline-flex items-center justify-center rounded-full bg-chili px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame hover:shadow-ember focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
             >
               {service.cta.label}
             </Link>

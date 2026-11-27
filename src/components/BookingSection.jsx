@@ -13,7 +13,7 @@ import Scallop from './Scallop'
 import Smoke from './Smoke'
 
 const FIELD =
-  'w-full rounded-lg border border-ink/15 bg-white px-4 py-3 text-ink transition-all outline-none placeholder:text-ink/35 focus:border-sun focus:ring-2 focus:ring-sun/30'
+  'w-full rounded-lg border border-ink/15 bg-white px-4 py-3 text-ink transition-all outline-none placeholder:text-ink/35 focus:border-ember focus:ring-2 focus:ring-ember/30'
 const LABEL = 'font-cond mb-1.5 block text-xs tracking-[0.24em] text-ink/70'
 
 const MIN_DATE = toISO(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate())
@@ -40,7 +40,7 @@ export default function BookingSection() {
 
   return (
     <section id="book" className="relative isolate scroll-mt-0 overflow-hidden bg-ink px-6 pb-20 pt-32 text-white md:pb-24 md:pt-40">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_70%_at_20%_100%,rgba(255,90,31,0.32),transparent_70%),radial-gradient(50%_50%_at_90%_0%,rgba(217,43,11,0.25),transparent_70%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_70%_at_20%_100%,rgba(200,54,10,0.32),transparent_70%),radial-gradient(50%_50%_at_90%_0%,rgba(200,54,10,0.25),transparent_70%)]" />
       <Smoke tone="dark" plumes={4} wisps={4} />
       <Scallop />
 
@@ -136,7 +136,7 @@ export default function BookingSection() {
                 <MagneticButton className="w-full">
                   <button
                     type="submit"
-                    className="w-full rounded-full bg-chili px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame hover:shadow-ember focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sun"
+                    className="w-full rounded-full bg-chili px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame hover:shadow-ember focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember"
                   >
                     Book the Bros
                   </button>

@@ -75,7 +75,7 @@ export default function Plate({ number, label, title, copy, Icon, lean = 0, dela
 
           {/* The face: dark metal with a hot glow rising from the bottom edge */}
           <div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/15 bg-gradient-to-br from-[#2B1D17] via-[#171210] to-[#0C0908] transition-colors duration-500 group-hover:border-sun/70">
-            <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-3/5 bg-[radial-gradient(70%_100%_at_50%_100%,rgba(255,90,31,0.5),transparent)] opacity-40 transition-opacity duration-700 group-hover:opacity-100" />
+            <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-3/5 bg-[radial-gradient(70%_100%_at_50%_100%,rgba(200,54,10,0.5),transparent)] opacity-40 transition-opacity duration-700 group-hover:opacity-100" />
             <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
             {/* A light sheen sweeps across the plate on hover */}
             <div aria-hidden="true" className="absolute -inset-y-4 -left-1/2 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-all duration-1000 group-hover:left-[130%] group-hover:opacity-100" />

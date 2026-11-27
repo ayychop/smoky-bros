@@ -139,7 +139,7 @@ export default function Hero() {
           <div aria-hidden="true" className="absolute left-1/2 top-1/2 aspect-square h-[84%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
           <div aria-hidden="true" className="absolute left-1/2 top-1/2 aspect-square h-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-sun/20" />
 
-          <motion.div className="absolute inset-0 z-20 flex items-center justify-center will-change-transform" style={{ y: broY, scale: broScale, opacity: broOpacity }}>
+          <motion.div className="absolute inset-0 z-20 flex items-center justify-center" style={{ y: broY, scale: broScale, opacity: broOpacity }}>
             <motion.div
               style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 900 }}
               initial={{ opacity: 0, scale: 0.8, y: 30 }}

@@ -9,7 +9,7 @@ export default function BadgeSmoke({ className = '' }) {
       {/* The glow: wide and soft, with no edge you can point to */}
       <div
         className="absolute -inset-[30%] animate-[auraBreath_7s_ease-in-out_infinite] rounded-full"
-        style={{ background: 'radial-gradient(closest-side, transparent 55%, rgba(255,122,40,0.3) 61%, rgba(217,43,11,0.12) 76%, transparent)' }}
+        style={{ background: 'radial-gradient(closest-side, transparent 55%, rgba(255,183,3,0.3) 61%, rgba(200,54,10,0.12) 76%, transparent)' }}
       />
 
       {/* The hairline and its gleam */}

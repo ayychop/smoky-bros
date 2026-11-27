@@ -3,20 +3,22 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
-      // Black, white, red and orange. Everything else on the site is a tint of these.
+      // The brand palette: Smoked Ember #C8360A and Fire Gold #FFB703 (see the :root variables in
+      // index.css), on Deep Charcoal and Warm Ash. Older token names stay as aliases so every
+      // component picks up the same two brand colours.
       colors: {
         charcoal: '#14100E',
         ink: '#0C0908',
-        ember: '#C8360A',
-        emberGlow: '#ff4d1c',
-        chili: '#D92B0B',
-        flame: '#FF5A1F',
-        sun: '#FF6A13',
-        gold: '#FF8A3D',
+        ember: 'rgb(var(--ember) / <alpha-value>)',
+        chili: 'rgb(var(--ember) / <alpha-value>)',
+        flame: 'rgb(var(--ember-lit) / <alpha-value>)',
+        emberGlow: 'rgb(var(--ember-lit) / <alpha-value>)',
+        gold: 'rgb(var(--gold) / <alpha-value>)',
+        sun: 'rgb(var(--gold) / <alpha-value>)',
+        amber: 'rgb(var(--gold) / <alpha-value>)',
         cream: '#F7F3EE',
         teal: '#161110',
         ash: '#F5F5F5',
-        amber: '#FF8A3D',
         glass: 'rgba(255, 255, 255, 0.03)',
       },
       fontFamily: {
@@ -29,7 +31,7 @@ export default {
       boxShadow: {
         sticker: '0 24px 60px -28px rgba(0, 0, 0, 0.75)',
         'sticker-lg': '0 40px 90px -36px rgba(0, 0, 0, 0.85)',
-        ember: '0 0 60px -10px rgba(255, 106, 19, 0.45)',
+        ember: '0 0 60px -10px rgba(200, 54, 10, 0.6)',
       },
     },
   },

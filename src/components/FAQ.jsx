@@ -30,12 +30,12 @@ export default function FAQ() {
                     type="button"
                     aria-expanded={open}
                     onClick={() => setOpenIndex(open ? -1 : index)}
-                    className="flex w-full items-center justify-between gap-6 px-5 py-5 text-left font-display text-lg text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sun md:text-xl"
+                    className="flex w-full items-center justify-between gap-6 px-5 py-5 text-left font-display text-lg text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember md:text-xl"
                   >
                     {item.q}
                     <motion.span
                       aria-hidden="true"
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/20 text-sun"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/20 text-ember"
                       animate={{ rotate: open ? 135 : 0 }}
                       transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
                     >

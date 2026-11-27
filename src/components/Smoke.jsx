@@ -57,7 +57,7 @@ export default function Smoke({ tone = 'dark', plumes = 3, embers, wisps, classN
         >
           <span
             className="absolute bottom-0 block rounded-full bg-sun"
-            style={{ width: ember.size, height: ember.size, boxShadow: '0 0 8px 2px rgba(255,106,19,0.8)' }}
+            style={{ width: ember.size, height: ember.size, boxShadow: '0 0 8px 2px rgba(255,183,3,0.8)' }}
           />
         </span>
       ))}

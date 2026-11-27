@@ -77,17 +77,17 @@ function Bottle({ className }) {
 
       {/* Label */}
       <rect x="34" y="178" width="92" height="130" rx="6" fill="#FFFFFF" stroke="#14100E" strokeWidth="3" />
-      <rect x="40" y="184" width="80" height="118" rx="3" stroke="#D92B0B" strokeWidth="1.5" />
+      <rect x="40" y="184" width="80" height="118" rx="3" stroke="#C8360A" strokeWidth="1.5" />
       <path
         d="M80 194 L98 199 V220 C98 232 90 239 80 244 C70 239 62 232 62 220 V199 Z"
-        fill="#D92B0B"
+        fill="#C8360A"
         stroke="#14100E"
         strokeWidth="3"
         strokeLinejoin="round"
       />
       <polygon
         points="80,211 82.64,218.36 90.46,218.6 84.28,223.39 86.47,230.9 80,226.5 73.53,230.9 75.72,223.39 69.54,218.6 77.36,218.36"
-        fill="#FF6A13"
+        fill="#FFB703"
         stroke="#14100E"
         strokeWidth="1.2"
         strokeLinejoin="round"
@@ -95,7 +95,7 @@ function Bottle({ className }) {
       <text x="80" y="264" textAnchor="middle" fontFamily="'Playfair Display', Georgia, serif" fontWeight="800" fontSize="10.5" textLength="58" lengthAdjust="spacing" fill="#14100E">
         BROS BBQ
       </text>
-      <text x="80" y="283" textAnchor="middle" fontFamily="'Barlow Condensed', sans-serif" fontWeight="700" fontSize="12" textLength="38" lengthAdjust="spacing" fill="#D92B0B">
+      <text x="80" y="283" textAnchor="middle" fontFamily="'Barlow Condensed', sans-serif" fontWeight="700" fontSize="12" textLength="38" lengthAdjust="spacing" fill="#C8360A">
         Sauce
       </text>
       <text x="80" y="297" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="500" fontSize="4.8" letterSpacing="1.1" fill="#1a0f09" opacity="0.7">

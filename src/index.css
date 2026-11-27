@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The brand palette, in one place. Values are space separated RGB channels so Tailwind
+   can still apply opacity (bg-ember/50). These match the brand guide exactly:
+   Smoked Ember #C8360A and Fire Gold #FFB703. */
+:root {
+  --ember: 200 54 10; /* #C8360A */
+  --gold: 255 183 3; /* #FFB703 */
+  --ember-lit: 224 69 15; /* #E0450F, ember when it is hovered or lit */
+}
+
 html {
   color-scheme: dark;
   background-color: #0C0908;
@@ -43,7 +52,7 @@ body {
 }
 
 ::selection {
-  background: #D92B0B;
+  background: #C8360A;
   color: #FFFFFF;
 }
 
@@ -64,7 +73,7 @@ button:not(:disabled):active {
   height: 100%;
   pointer-events: none;
   z-index: 50;
-  opacity: 0.05;
+  opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 240px 240px;
 }
@@ -125,7 +134,7 @@ button:not(:disabled):active {
   background-image: repeating-linear-gradient(
     125deg,
     transparent 0 22px,
-    rgba(255, 106, 19, 0.16) 22px 24px
+    rgba(255,183,3,0.16) 22px 24px
   );
 }
 
@@ -197,7 +206,7 @@ button:not(:disabled):active {
 }
 
 .road-dash {
-  background-image: repeating-linear-gradient(90deg, #ff6a13 0 56px, transparent 56px 112px);
+  background-image: repeating-linear-gradient(90deg, #FFB703 0 56px, transparent 56px 112px);
   animation: drive 3s linear infinite;
 }
 
@@ -278,14 +287,14 @@ button:not(:disabled):active {
 
 /* A fine ember hairline, used instead of heavy borders */
 .hairline-ember {
-  background-image: linear-gradient(90deg, transparent, rgba(255, 106, 19, 0.7), transparent);
+  background-image: linear-gradient(90deg, transparent, rgba(255,183,3,0.7), transparent);
 }
 
 /* Warm light coming up off the fire, for the black sections */
 .ember-glow {
   background-image:
-    radial-gradient(60% 55% at 50% 100%, rgba(255, 90, 31, 0.28), transparent 70%),
-    radial-gradient(40% 40% at 85% 10%, rgba(217, 43, 11, 0.16), transparent 70%);
+    radial-gradient(60% 55% at 50% 100%, rgba(200,54,10,0.28), transparent 70%),
+    radial-gradient(40% 40% at 85% 10%, rgba(200,54,10,0.16), transparent 70%);
 }
 
 /* Embers: the lane is as tall as the section, so sliding it up by its own height carries the spark to the top */
@@ -336,13 +345,12 @@ button:not(:disabled):active {
 
 /* The navbar badge: a soft band of light sweeps across it, and the rim catches a little warmth at the same moment */
 .nav-gleam {
-  background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.08) 38%, rgba(255, 244, 232, 0.6) 50%, rgba(255, 255, 255, 0.08) 62%, transparent 80%);
-  mix-blend-mode: soft-light;
+  background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.08) 38%, rgba(255, 244, 232, 0.32) 50%, rgba(255, 255, 255, 0.08) 62%, transparent 80%);
   transform: translateX(-100%) skewX(-18deg);
   animation: navGleam 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 .nav-gleam-ring {
-  box-shadow: 0 0 0 1px rgba(255, 138, 61, 0.3), 0 0 14px rgba(255, 106, 19, 0.28);
+  box-shadow: 0 0 0 1px rgba(255,183,3,0.3), 0 0 14px rgba(255,183,3,0.28);
   animation: navRing 6s ease-in-out infinite;
 }
 @keyframes navGleam {

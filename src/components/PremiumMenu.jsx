@@ -20,7 +20,7 @@ function TiltCard({ className, children, as: Tag = motion.div, ...rest }) {
   const rotateY = useSpring(useTransform(px, [0, 1], [-9, 9]), { stiffness: 140, damping: 18, mass: 0.5 })
   const lightX = useTransform(px, [0, 1], ['0%', '100%'])
   const lightY = useTransform(py, [0, 1], ['0%', '100%'])
-  const light = useMotionTemplate`radial-gradient(420px circle at ${lightX} ${lightY}, rgba(255,106,19,0.22), transparent 60%)`
+  const light = useMotionTemplate`radial-gradient(420px circle at ${lightX} ${lightY}, rgba(255,183,3,0.22), transparent 60%)`
 
   const onMove = (event) => {
     const bounds = event.currentTarget.getBoundingClientRect()
@@ -50,7 +50,7 @@ function TiltCard({ className, children, as: Tag = motion.div, ...rest }) {
       {/* The ember border lights up on hover */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-2xl border border-white/10 transition-all duration-500 group-hover:border-sun/70 group-hover:shadow-[0_0_50px_-6px_rgba(255,90,31,0.55)]"
+        className="pointer-events-none absolute inset-0 rounded-2xl border border-white/10 transition-all duration-500 group-hover:border-sun/70 group-hover:shadow-[0_0_50px_-6px_rgba(200,54,10,0.55)]"
       />
     </Tag>
   )
@@ -105,7 +105,7 @@ function SauceCard() {
     >
       <TiltCard as={MotionLink} to="/enquiry" className="flex flex-1 rounded-2xl" aria-label="Bros BBQ Sauce, ask about the sauce">
         <div className="absolute inset-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#2A110B] via-[#160D0A] to-ink">
-          <div className="absolute -right-[8%] top-1/2 h-[120%] w-[70%] -translate-y-1/2 bg-[radial-gradient(closest-side,rgba(255,90,31,0.5),rgba(217,43,11,0.16)_55%,transparent)]" />
+          <div className="absolute -right-[8%] top-1/2 h-[120%] w-[70%] -translate-y-1/2 bg-[radial-gradient(closest-side,rgba(200,54,10,0.5),rgba(200,54,10,0.16)_55%,transparent)]" />
           <Smoke tone="dark" plumes={2} wisps={3} className="!-z-0" />
         </div>
 
@@ -136,7 +136,7 @@ function SauceCard() {
 
           {/* The stage: a turntable with the bottle turning on it */}
           <div className="relative flex h-[19rem] items-end justify-center [transform-style:preserve-3d] md:h-[30rem]" style={{ transform: 'translateZ(60px)' }}>
-            <div aria-hidden="true" className="absolute bottom-3 h-12 w-56 rounded-[50%] border border-sun/70 bg-[radial-gradient(closest-side,rgba(255,90,31,0.35),rgba(255,90,31,0.05))] shadow-[0_0_40px_-4px_rgba(255,90,31,0.6)] md:w-72" />
+            <div aria-hidden="true" className="absolute bottom-3 h-12 w-56 rounded-[50%] border border-sun/70 bg-[radial-gradient(closest-side,rgba(200,54,10,0.35),rgba(200,54,10,0.05))] shadow-[0_0_40px_-4px_rgba(200,54,10,0.6)] md:w-72" />
             <div aria-hidden="true" className="absolute bottom-[1.1rem] h-7 w-40 rounded-[50%] bg-black/60 blur-[3px] md:w-52" />
             <motion.div
               className="relative mb-9 h-60 will-change-transform md:h-[25rem]"

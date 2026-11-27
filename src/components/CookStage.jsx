@@ -24,7 +24,7 @@ export default function CookStage() {
       >
         <div className="relative isolate mx-auto h-52 w-52 sm:h-64 sm:w-64">
           <BadgeSmoke />
-          <Logo alive className="relative z-10 h-full w-full drop-shadow-[0_20px_50px_rgba(255,90,31,0.3)]" />
+          <Logo alive className="relative z-10 h-full w-full" />
         </div>
       </motion.div>
 
@@ -33,7 +33,7 @@ export default function CookStage() {
         initial="rest"
         whileHover="hot"
       >
-        <span className="block text-transparent" style={{ WebkitTextStroke: '2px #FF6A13' }}>
+        <span className="block text-transparent" style={{ WebkitTextStroke: '2px #FFB703' }}>
           LET&apos;S COOK
         </span>
         <motion.span
