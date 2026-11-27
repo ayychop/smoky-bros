@@ -1,10 +1,29 @@
 import { animate, motion, useInView, useMotionValue, useTransform } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { EASE_OUT_EXPO } from '../easing'
+import { scrollToTarget } from '../lib/lenis'
 import FlameBro from './FlameBro'
 import Logo from './Logo'
+
+// The chapters of the deck, in order. Drives the side index and the scroll cue.
+const SECTIONS = [
+  { id: 'cover', label: 'Cover' },
+  { id: 'marks', label: 'Logos' },
+  { id: 'colour', label: 'Colour' },
+  { id: 'typography', label: 'Typography' },
+  { id: 'guidelines', label: 'Guidelines' },
+  { id: 'tagline', label: 'Tagline' },
+  { id: 'future', label: 'The future' },
+]
+
+const GUIDELINES = [
+  { title: 'Give it room', copy: 'Keep clear space around the logo, at least the height of the flame on every side.' },
+  { title: 'Keep it legible', copy: 'The main logo never runs smaller than 64 pixels tall. Below that, use the flame bro.' },
+  { title: 'Right ground only', copy: 'Place it on Deep Charcoal or Warm Ash. Never on busy photography.' },
+  { title: 'Never distort', copy: 'No stretching, rotating, recolouring or added effects. The logo stays as drawn.' },
+]
 
 const MARKS = [
   { id: 'main', numeral: 'I', name: 'The Main Logo', note: 'The badge. For the trailer, the menu board and anywhere we sign our name', Mark: Logo, markClass: 'h-full w-full' },
@@ -19,8 +38,8 @@ const COLOURS = [
 ]
 
 const STATS = [
-  { label: 'Target', value: 50, unit: 'UK Locations' },
-  { label: 'Expansion', text: 'Ghana and Nigeria', unit: '2028' },
+  { label: 'Milestone', value: 1000, unit: 'Events booked' },
+  { label: 'Expansion', text: 'First stores opened', unit: 'Ghana, Nigeria, Dubai' },
 ]
 
 const reveal = {
@@ -40,9 +59,9 @@ function Eyebrow({ children }) {
   )
 }
 
-function Slide({ eyebrow, title, children, className = '' }) {
+function Slide({ id, eyebrow, title, children, className = '' }) {
   return (
-    <section className={`relative mx-auto max-w-6xl px-6 py-24 md:py-32 ${className}`}>
+    <section id={id} className={`relative mx-auto max-w-6xl px-6 py-24 md:py-32 ${className}`}>
       <motion.div {...reveal} className="text-center">
         <Eyebrow>{eyebrow}</Eyebrow>
         <h2 className="mt-5 font-display text-4xl leading-[1.05] text-[#F5F5F5] md:text-6xl">{title}</h2>
@@ -56,7 +75,7 @@ function CountUp({ to }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, amount: 0.8 })
   const value = useMotionValue(0)
-  const rounded = useTransform(value, (latest) => Math.round(latest))
+  const rounded = useTransform(value, (latest) => Math.round(latest).toLocaleString('en-GB'))
 
   useEffect(() => {
     if (!inView) return undefined
@@ -65,6 +84,67 @@ function CountUp({ to }) {
   }, [inView, to, value])
 
   return <motion.span ref={ref}>{rounded}</motion.span>
+}
+
+const jumpTo = (id) => {
+  const target = document.getElementById(id)
+  if (target) scrollToTarget(target)
+}
+
+// A slim index on the right edge: shows where you are and lets you jump between chapters
+function SectionIndex() {
+  const [active, setActive] = useState('cover')
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.isIntersecting && setActive(entry.target.id)),
+      { rootMargin: '-45% 0px -50% 0px' },
+    )
+    SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <nav aria-label="Deck sections" className="fixed right-7 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-end gap-1 lg:flex">
+      {SECTIONS.map(({ id, label }) => {
+        const on = active === id
+        return (
+          <button
+            key={id}
+            type="button"
+            onClick={() => jumpTo(id)}
+            aria-label={`Go to ${label}`}
+            aria-current={on ? 'true' : undefined}
+            className="group flex items-center gap-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FFB703]"
+          >
+            <span className={`text-[0.65rem] font-semibold uppercase tracking-[0.25em] transition-all duration-500 ${on ? 'translate-x-0 text-[#FFB703] opacity-100' : 'translate-x-1 text-white/60 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`}>
+              {label}
+            </span>
+            <span aria-hidden="true" className={`block w-px transition-all duration-500 ${on ? 'h-7 bg-[#FFB703]' : 'h-3 bg-white/25 group-hover:bg-white/60'}`} />
+          </button>
+        )
+      })}
+    </nav>
+  )
+}
+
+// One brand rule, shown rather than told: a small stage for the demo, then the rule itself
+function Guideline({ index, title, copy, children }) {
+  return (
+    <motion.div
+      {...reveal}
+      transition={{ ...reveal.transition, delay: index * 0.1 }}
+      className="flex flex-col rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-5 text-center"
+    >
+      <div className="flex h-48 items-center justify-center overflow-hidden rounded-2xl border border-white/5 bg-black/40">{children}</div>
+      <p className="balance-track mt-6 text-xs font-semibold uppercase tracking-[0.4em] text-[#FFB703]">{`0${index + 1}`}</p>
+      <h3 className="mt-3 font-display text-xl text-[#F5F5F5]">{title}</h3>
+      <p className="mx-auto mt-3 max-w-[16rem] text-balance px-1 pb-3 text-sm leading-relaxed text-white/50">{copy}</p>
+    </motion.div>
+  )
 }
 
 // A client pitch page: keep it out of search results
@@ -86,6 +166,8 @@ export default function BrandBoard() {
       {/* Quiet ember light that sits behind the whole deck */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[120svh] bg-[radial-gradient(60%_50%_at_50%_0%,rgba(200,54,10,0.28),transparent_70%)]" />
 
+      <SectionIndex />
+
       <Link
         to="/"
         className="absolute left-5 top-5 z-20 inline-flex items-center gap-2 rounded-full px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-white/40 transition-colors duration-300 hover:text-[#FFB703] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FFB703] md:left-8 md:top-8"
@@ -95,7 +177,7 @@ export default function BrandBoard() {
       </Link>
 
       {/* Cover */}
-      <header className="relative flex min-h-[100svh] flex-col items-center justify-center px-6 py-28 text-center">
+      <header id="cover" className="relative flex min-h-[100svh] flex-col items-center justify-center px-6 py-28 text-center">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE_OUT_EXPO }}>
           <Eyebrow>Brand Identity</Eyebrow>
         </motion.div>
@@ -116,17 +198,27 @@ export default function BrandBoard() {
         >
           The identity, the palette and the road ahead. Prepared for private presentation.
         </motion.p>
-        <motion.div
-          aria-hidden="true"
-          className="absolute bottom-10 h-14 w-px bg-gradient-to-b from-[#FFB703] to-transparent"
-          animate={{ scaleY: [0.3, 1, 0.3], opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ originY: 0 }}
-        />
+        <motion.button
+          type="button"
+          onClick={() => jumpTo('marks')}
+          className="group absolute bottom-8 flex flex-col items-center gap-4 px-6 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FFB703]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, delay: 1.2 }}
+        >
+          <span className="balance-track text-[0.7rem] font-semibold uppercase tracking-[0.45em] text-white/60 transition-colors duration-300 group-hover:text-[#FFB703]">Scroll to explore</span>
+          <span aria-hidden="true" className="relative block h-14 w-px overflow-hidden bg-white/15">
+            <motion.span
+              className="absolute inset-x-0 top-0 block h-7 bg-gradient-to-b from-transparent via-[#FFB703] to-transparent"
+              animate={{ y: [-28, 56] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </span>
+        </motion.button>
       </header>
 
       {/* The logos */}
-      <Slide eyebrow="The marks" title="Two ways to wear the fire">
+      <Slide id="marks" eyebrow="The marks" title="Two ways to wear the fire">
         <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
           {MARKS.map(({ id, numeral, name, note, Mark, markClass }, index) => (
             <motion.figure
@@ -150,7 +242,7 @@ export default function BrandBoard() {
       </Slide>
 
       {/* Colour */}
-      <Slide eyebrow="Colour" title="Forged in four tones">
+      <Slide id="colour" eyebrow="Colour" title="Forged in four tones">
         <div className="grid grid-cols-2 gap-x-6 gap-y-14 lg:grid-cols-4">
           {COLOURS.map((colour, index) => (
             <motion.div
@@ -168,7 +260,7 @@ export default function BrandBoard() {
       </Slide>
 
       {/* Typography */}
-      <Slide eyebrow="Typography" title="A classic voice, a clean hand">
+      <Slide id="typography" eyebrow="Typography" title="A classic voice, a clean hand">
         <div className="grid gap-6 md:grid-cols-2">
           <motion.div {...reveal} className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-8 md:p-12">
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#FFB703]">Headings</p>
@@ -187,8 +279,47 @@ export default function BrandBoard() {
         </div>
       </Slide>
 
+      {/* Guidelines */}
+      <Slide id="guidelines" eyebrow="Guidelines" title="How to wear it well">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <Guideline index={0} {...GUIDELINES[0]}>
+            <div className="border border-dashed border-[#FFB703]/50 p-5">
+              <Logo className="h-24 w-24" />
+            </div>
+          </Guideline>
+          <Guideline index={1} {...GUIDELINES[1]}>
+            <div className="flex items-end gap-8">
+              <figure className="flex flex-col items-center gap-3">
+                <Logo className="h-16 w-16" />
+                <figcaption className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white/50">64 px</figcaption>
+              </figure>
+              <figure className="flex flex-col items-center gap-3">
+                <FlameBro className="h-9 w-auto" />
+                <figcaption className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white/50">Smaller</figcaption>
+              </figure>
+            </div>
+          </Guideline>
+          <Guideline index={2} {...GUIDELINES[2]}>
+            <div className="flex h-full w-full">
+              <div className="flex w-1/2 items-center justify-center bg-[#050505]">
+                <Logo className="h-20 w-20" />
+              </div>
+              <div className="flex w-1/2 items-center justify-center bg-[#F5F5F5]">
+                <Logo className="h-20 w-20" />
+              </div>
+            </div>
+          </Guideline>
+          <Guideline index={3} {...GUIDELINES[3]}>
+            <div className="relative">
+              <Logo className="h-24 w-24 origin-center scale-x-[1.45] opacity-40" />
+              <span aria-hidden="true" className="absolute left-1/2 top-1/2 block h-px w-[150%] -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-[#C8360A]" />
+            </div>
+          </Guideline>
+        </div>
+      </Slide>
+
       {/* Tagline */}
-      <section className="relative flex min-h-[75svh] items-center justify-center px-6 py-24 text-center">
+      <section id="tagline" className="relative flex min-h-[75svh] items-center justify-center px-6 py-24 text-center">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_45%_at_50%_50%,rgba(200,54,10,0.22),transparent_70%)]" />
         <motion.h2
           {...reveal}
@@ -202,7 +333,7 @@ export default function BrandBoard() {
       </section>
 
       {/* Global vision */}
-      <Slide eyebrow="The road ahead" title="The Future of Smoke" className="pb-32 md:pb-40">
+      <Slide id="future" eyebrow="The road ahead" title="The Future of Smoke" className="pb-32 md:pb-40">
         <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
           {STATS.map((stat, index) => (
             <motion.div
