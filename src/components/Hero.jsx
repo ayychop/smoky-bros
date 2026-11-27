@@ -5,7 +5,9 @@ import { useBootDone } from '../boot'
 import { SHOWCASE, SLOGAN } from '../data/site'
 import { EASE_OUT_EXPO } from '../easing'
 import { scrollToTarget } from '../lib/lenis'
+import { polar, STOPS } from '../lib/wheelGeometry'
 import BookSeal from './BookSeal'
+import FireWheel from './FireWheel'
 import FlameBro from './FlameBro'
 import MagneticButton from './MagneticButton'
 import Polaroid from './Polaroid'
@@ -26,14 +28,13 @@ const burn = (index, total) => {
   return `rgb(${FROM.map((from, i) => Math.round(from + (TO[i] - from) * t)).join(',')})`
 }
 
-// Where each satellite sits on the orbit: the four diagonals, each the same distance from the centre
-const SATELLITES = [
-  { key: 'brisket', at: 'left-[19%] top-[19%]' },
-  { key: 'seal', at: 'left-[81%] top-[19%]' },
-  { key: 'ribs', at: 'left-[19%] top-[81%]' },
-  { key: 'wings', at: 'left-[81%] top-[81%]' },
-]
-const PHOTO = 'block w-[5.5rem] sm:w-28 md:w-40'
+// The four things on the wheel. Each sits with its centre exactly on the rim, at mirrored angles, and is the same
+// share of the stage wide, so the spacing is identical on every screen: a card is 24% of the stage, the flame bro 56% tall.
+const ITEM_WIDTH = '24%'
+const SATELLITES = ['brisket', 'seal', 'wings', 'ribs'].map((key) => {
+  const { x, y } = polar(STOPS[key])
+  return { key, left: `${x}%`, top: `${y}%` }
+})
 
 const TICKER = ['Smoked low and slow', 'Cooked over live fire', 'Catering and street food', 'We come to you', 'Fun for all ages', 'Made in Maidenhead']
 
@@ -88,9 +89,9 @@ export default function Hero() {
       <Smoke tone="dark" plumes={4} embers={12} />
 
 
-      <div className="mx-auto grid max-w-7xl items-center gap-6 px-6 pb-14 pt-24 md:min-h-[calc(100svh-3.9rem)] md:grid-cols-[1.05fr_1fr] md:gap-4 md:pb-24 md:pt-32">
+      <div className="mx-auto grid max-w-7xl items-center gap-6 px-6 pb-14 pt-24 lg:min-h-[calc(100svh-3.9rem)] lg:grid-cols-[1.05fr_1fr] lg:gap-4 lg:pb-24 lg:pt-32">
         {/* Words */}
-        <motion.div className="relative z-10 text-center will-change-transform md:text-left" style={{ y: textY, opacity: textOpacity }}>
+        <motion.div className="relative z-10 text-center will-change-transform lg:text-left" style={{ y: textY, opacity: textOpacity }}>
           <motion.p {...enter(0.1)} className="font-cond inline-flex items-center gap-4 text-sm tracking-[0.4em] text-sun md:text-base">
             <span aria-hidden="true" className="h-px w-10 bg-sun" />
             <span>
@@ -100,7 +101,7 @@ export default function Hero() {
 
           <motion.h1
             aria-label={`${SLOGAN.lead} ${SLOGAN.accent}`}
-            className="mt-5 flex justify-center font-display leading-[1] md:mt-6 md:justify-start"
+            className="mt-5 flex justify-center font-display leading-[1] lg:mt-6 lg:justify-start"
             variants={container}
             initial="hidden"
             animate={state}
@@ -120,11 +121,11 @@ export default function Hero() {
             </span>
           </motion.h1>
 
-          <motion.p {...enter(1.0)} className="font-lead mx-auto mt-6 max-w-lg text-[1.4rem] leading-[1.4] text-white/85 md:mx-0 md:text-[1.7rem]">
+          <motion.p {...enter(1.0)} className="font-lead mx-auto mt-6 max-w-lg text-[1.4rem] leading-[1.4] text-white/85 lg:mx-0 md:text-[1.7rem]">
             Premium BBQ catering and street food for your event, cooked over real fire and brought to you from Maidenhead, Berkshire
           </motion.p>
 
-          <motion.div {...enter(1.15)} className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center md:justify-start">
+          <motion.div {...enter(1.15)} className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
             <MagneticButton>
               <Link
                 to="/#menu"
@@ -144,43 +145,42 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* The stage: the flame bro in the middle, and four things that matter on an orbit around him */}
-        <div className="relative order-first mx-auto aspect-square w-full max-w-[22rem] sm:max-w-md md:order-none md:aspect-auto md:h-[36rem] md:max-w-none">
-          {/* The orbit: a fine ring and a dashed one inside it, so the satellites read as one system */}
-          <div aria-hidden="true" className="absolute left-1/2 top-1/2 aspect-square h-[84%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
-          <div aria-hidden="true" className="absolute left-1/2 top-1/2 aspect-square h-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-sun/20" />
+        {/* The stage: a square, so the wheel is a true circle, with the flame bro at its centre and four things on its rim */}
+        <div className="relative order-first mx-auto aspect-square w-full max-w-[22rem] sm:max-w-md lg:order-none md:max-w-[34rem]">
+          <FireWheel />
 
           <motion.div className="absolute inset-0 z-20 flex items-center justify-center" style={{ y: broY, scale: broScale, opacity: broOpacity }}>
             <motion.div
+              className="h-[56%]"
               style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 900 }}
               initial={{ opacity: 0, scale: 0.8, y: 30 }}
               animate={ready ? { opacity: 1, scale: 1, y: 0 } : undefined}
               transition={{ duration: 1.1, ease: EASE_OUT_EXPO, delay: 0.3 }}
             >
-              <FlameBro alive className="h-[13.5rem] w-auto sm:h-[16rem] md:h-[22rem]" />
+              <FlameBro alive className="h-full w-auto" />
             </motion.div>
           </motion.div>
 
           {SATELLITES.map((item, index) => (
-            <div key={item.key} className={`absolute z-30 -translate-x-1/2 -translate-y-1/2 ${item.at}`}>
+            <div key={item.key} className="absolute z-30 -translate-x-1/2 -translate-y-1/2" style={{ left: item.left, top: item.top, width: ITEM_WIDTH }}>
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, y: 20 }}
                 animate={ready ? { opacity: 1, scale: 1, y: 0 } : undefined}
                 transition={{ duration: 0.9, ease: EASE_OUT_EXPO, delay: 0.7 + index * 0.15 }}
               >
                 {item.key === 'brisket' && (
-                  <Link to="/#menu" aria-label="See the menu, brisket" className={`${PHOTO} ${ring}`}>
+                  <Link to="/#menu" aria-label="See the menu, brisket" className={`block w-full ${ring}`}>
                     <Polaroid src={SHOWCASE[0].image} alt={SHOWCASE[0].alt} caption="Brisket" priority imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
                   </Link>
                 )}
                 {item.key === 'wings' && (
-                  <Link to="/#menu" aria-label="See the menu, wings" className={`${PHOTO} ${ring}`}>
+                  <Link to="/#menu" aria-label="See the menu, wings" className={`block w-full ${ring}`}>
                     <Polaroid src={SHOWCASE[1].image} alt={SHOWCASE[1].alt} caption="Wings" priority imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
                   </Link>
                 )}
-                {item.key === 'seal' && <BookSeal className="h-[4.75rem] w-[4.75rem] sm:h-24 sm:w-24 md:h-32 md:w-32" />}
+                {item.key === 'seal' && <BookSeal className="aspect-square w-full" />}
                 {item.key === 'ribs' && (
-                  <Link to="/#menu" aria-label="See the menu, ribs" className={`${PHOTO} ${ring}`}>
+                  <Link to="/#menu" aria-label="See the menu, ribs" className={`block w-full ${ring}`}>
                     <Polaroid src={SHOWCASE[3].image} alt={SHOWCASE[3].alt} caption="Ribs" priority imgClassName="aspect-[4/3]" className="!pb-8 transition-transform duration-300 hover:-translate-y-1" />
                   </Link>
                 )}

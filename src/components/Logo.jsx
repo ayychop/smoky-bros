@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useId } from "react";
 import usePauseOffscreen from "../lib/usePauseOffscreen";
 import { FlameBroArt } from "./FlameBro";
+import { FlameBroFace, LiveFlameBody } from "./LiveFlame";
 
 // The Smoky Bros badge: a black roadhouse seal with our flame bro in shades standing on a grill, a sunburst behind
 // him and a ribbon across the front.
@@ -185,7 +186,8 @@ function AliveLogo({ className }) {
       <div aria-hidden="true" className="fb-bob pointer-events-none absolute inset-0" style={{ "--bob": "-1.17%" }}>
         <svg viewBox={VB} shapeRendering="geometricPrecision" className="fb-breathe absolute inset-0 h-full w-full" style={{ transformOrigin: "50.4% 55.6%" }} fill="none" overflow="visible">
           <g transform="translate(70.5 45) scale(0.49)">
-            <FlameBroArt uid={uid} />
+            <LiveFlameBody uid={uid} />
+            <FlameBroFace uid={uid} />
           </g>
         </svg>
       </div>

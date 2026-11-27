@@ -453,6 +453,36 @@ p, li { text-wrap: pretty; }
   will-change: transform;
 }
 
+/* The light he throws: a fire's glow never holds still, it gutters and flares */
+@keyframes auraFlicker {
+  0%,
+  100% {
+    opacity: 0.88;
+  }
+  12% {
+    opacity: 1;
+  }
+  27% {
+    opacity: 0.78;
+  }
+  41% {
+    opacity: 0.97;
+  }
+  58% {
+    opacity: 0.84;
+  }
+  73% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 0.9;
+  }
+}
+
+.fb-aura {
+  animation: auraFlicker 2.9s ease-in-out infinite;
+}
+
 /* Smoke off the tip of his head: each puff starts small right at the tip, swells, sways, cools and fades */
 @keyframes fbPuff {
   0% {
@@ -572,6 +602,26 @@ p, li { text-wrap: pretty; }
   animation-fill-mode: backwards;
 }
 
+/* The beads on the wheel: heat passes from one to the next, round the dial */
+@keyframes wheelBead {
+  0%,
+  40%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 rgba(255, 183, 3, 0);
+  }
+  14% {
+    opacity: 1;
+    transform: scale(1.25);
+    box-shadow: 0 0 10px 3px rgba(255, 183, 3, 0.75);
+  }
+}
+
+.wheel-bead {
+  animation: wheelBead 4.4s ease-in-out infinite;
+}
+
 /* The scroll cue on the home page */
 @keyframes cueBob {
   0%,
@@ -605,6 +655,7 @@ p, li { text-wrap: pretty; }
   .road-dash-track,
   .fb-bob,
   .fb-breathe,
+  .fb-aura,
   .fb-puff,
   .fb-warm,
   .turntable,
@@ -612,7 +663,8 @@ p, li { text-wrap: pretty; }
   .badge-coal,
   .badge-ember,
   .cue-bob,
-  .cue-sweep {
+  .cue-sweep,
+  .wheel-bead {
     animation: none;
   }
 

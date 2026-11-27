@@ -11,17 +11,21 @@ export default function usePauseOffscreen(margin = '120px') {
     const element = ref.current
     if (!element || typeof IntersectionObserver === 'undefined') return undefined
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        element.dataset.paused = entry.isIntersecting ? 'false' : 'true'
-      },
-      { rootMargin: margin },
-    )
+    // CSS animations are paused by the stylesheet. Drawings that animate their own shapes (SMIL) are paused here.
+    const set = (paused) => {
+      element.dataset.paused = paused ? 'true' : 'false'
+      element.querySelectorAll('svg').forEach((svg) => {
+        if (paused) svg.pauseAnimations?.()
+        else svg.unpauseAnimations?.()
+      })
+    }
+
+    const observer = new IntersectionObserver(([entry]) => set(!entry.isIntersecting), { rootMargin: margin })
     observer.observe(element)
 
     // A hidden tab should not animate either
     const onVisibility = () => {
-      if (document.hidden) element.dataset.paused = 'true'
+      if (document.hidden) set(true)
     }
     document.addEventListener('visibilitychange', onVisibility)
 

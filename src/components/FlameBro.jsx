@@ -1,16 +1,13 @@
 import { motion } from 'framer-motion'
 import { useId } from 'react'
 import usePauseOffscreen from '../lib/usePauseOffscreen'
+import { BELLY, FLAME, INK } from './flameShapes'
+import { FlameBroFace, LiveFlameBody } from './LiveFlame'
 
 // The Smoky Bros mascot: a flame in sunglasses with a big grin. He works on his own, as a sticker,
 // and he is also the face of the badge in Logo.
-export const INK = '#14100E'
+export { INK }
 const WHITE = '#FFFFFF'
-
-const FLAME =
-  'M104 4 C106 30 126 40 138 60 C142 52 146 46 146 38 C166 66 166 104 154 132 C148 156 130 176 106 180 C94 182 86 182 76 178 C48 168 36 140 40 114 C42 98 48 88 56 78 C58 90 64 94 70 94 C66 74 74 56 88 40 C94 32 102 22 104 4 Z'
-const BELLY =
-  'M102 84 C104 98 124 106 128 128 C132 152 118 170 102 170 C84 170 70 154 72 134 C74 114 96 106 102 84 Z'
 
 // Smoke rising off the top of the flame. Each puff starts small and warm right at the tip, then swells,
 // sways, cools to white and fades, and the next one follows close behind, so it reads as one soft column.
@@ -184,7 +181,7 @@ export default function FlameBro({ className = 'h-48 w-auto', alive = true, smok
       {glow && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute"
+          className="fb-aura pointer-events-none absolute"
           style={{
             left: pct(103 - 150 - VIEW.x, VIEW.w),
             top: pct(100 - 170 - VIEW.y, VIEW.h),
@@ -195,17 +192,45 @@ export default function FlameBro({ className = 'h-48 w-auto', alive = true, smok
         />
       )}
       <div className={`relative h-full ${alive ? 'fb-bob' : ''}`}>
-        <svg
-          viewBox="22 -12 162 212"
-          role="img"
-          aria-label="The Smoky Bros flame mascot in sunglasses"
-          shapeRendering="geometricPrecision"
-          className={`block h-full w-auto ${alive ? 'fb-breathe' : ''}`}
-          fill="none"
-          overflow="visible"
-        >
-          <FlameBroArt uid={uid} alive={false} sticker={sticker} />
-        </svg>
+        {sticker ? (
+          <svg
+            viewBox="22 -12 162 212"
+            role="img"
+            aria-label="The Smoky Bros flame mascot in sunglasses"
+            shapeRendering="geometricPrecision"
+            className={`block h-full w-auto ${alive ? 'fb-breathe' : ''}`}
+            fill="none"
+            overflow="visible"
+          >
+            <FlameBroArt uid={uid} alive={false} sticker />
+          </svg>
+        ) : (
+          <div className={`relative h-full ${alive ? 'fb-breathe' : ''}`}>
+            {/* The flame: its outline is the only thing that is redrawn, and it is a small shape */}
+            <svg
+              viewBox="22 -12 162 212"
+              role="img"
+              aria-label="The Smoky Bros flame mascot in sunglasses"
+              shapeRendering="geometricPrecision"
+              className="block h-full w-auto"
+              fill="none"
+              overflow="visible"
+            >
+              <LiveFlameBody uid={uid} animated={alive} />
+            </svg>
+            {/* The face: painted once and left alone, on a layer of its own */}
+            <svg
+              viewBox="22 -12 162 212"
+              aria-hidden="true"
+              shapeRendering="geometricPrecision"
+              className="absolute inset-0 h-full w-full [transform:translateZ(0)]"
+              fill="none"
+              overflow="visible"
+            >
+              <FlameBroFace uid={uid} />
+            </svg>
+          </div>
+        )}
       </div>
     </div>
   )
