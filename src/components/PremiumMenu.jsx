@@ -72,9 +72,9 @@ function PhotoCard({ item, index }) {
             alt={item.alt}
             loading="lazy"
             decoding="async"
-            className="h-full w-full scale-105 object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.12] [filter:saturate(1.2)_contrast(1.06)_brightness(0.95)]"
+            className="h-full w-full scale-105 object-cover transition-[transform,filter] duration-[1400ms] ease-out group-hover:scale-[1.12] [filter:saturate(1.2)_contrast(1.06)_brightness(1)] group-hover:[filter:saturate(1.42)_contrast(1.08)_brightness(1.28)]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent transition-opacity duration-700 group-hover:opacity-75" />
         </div>
         <div className="relative p-5 [transform-style:preserve-3d] md:p-6" style={{ transform: 'translateZ(40px)' }}>
           <span aria-hidden="true" className="block h-px w-10 bg-sun" />

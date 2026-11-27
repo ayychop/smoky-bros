@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useBootDone } from '../boot'
 import { SHOWCASE, SLOGAN } from '../data/site'
 import { EASE_OUT_EXPO } from '../easing'
+import { scrollToTarget } from '../lib/lenis'
 import BookSeal from './BookSeal'
 import FlameBro from './FlameBro'
 import MagneticButton from './MagneticButton'
@@ -42,6 +43,11 @@ export default function Hero() {
 
   // Parallax: the mascot, each photo and the headline travel at their own speed
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  // The scroll cue is for the very top of the page only: it melts away as soon as they start scrolling
+  const { scrollY } = useScroll()
+  const cueOpacity = useTransform(scrollY, [0, 120], [1, 0])
+  const cuePointer = useTransform(scrollY, (y) => (y > 100 ? 'none' : 'auto'))
+  const nudge = () => ref.current?.nextElementSibling && scrollToTarget(ref.current.nextElementSibling)
   const broY = useTransform(scrollYProgress, [0, 1], [0, -70])
   const broScale = useTransform(scrollYProgress, [0, 1], [1, 1.12])
   const broOpacity = useTransform(scrollYProgress, [0.2, 0.9], [1, 0])
@@ -77,7 +83,7 @@ export default function Hero() {
       <Smoke tone="dark" plumes={4} embers={12} />
 
 
-      <div className="mx-auto grid max-w-7xl items-center gap-6 px-6 pb-14 pt-24 md:min-h-[88svh] md:grid-cols-[1.05fr_1fr] md:gap-4 md:pb-24 md:pt-32">
+      <div className="mx-auto grid max-w-7xl items-center gap-6 px-6 pb-14 pt-24 md:min-h-[calc(100svh-3.9rem)] md:grid-cols-[1.05fr_1fr] md:gap-4 md:pb-24 md:pt-32">
         {/* Words */}
         <motion.div className="relative z-10 text-center will-change-transform md:text-left" style={{ y: textY, opacity: textOpacity }}>
           <motion.p {...enter(0.1)} className="font-cond inline-flex items-center gap-4 text-sm tracking-[0.4em] text-sun md:text-base">
@@ -178,6 +184,51 @@ export default function Hero() {
           ))}
         </div>
       </div>
+
+      {/* Scroll cue. Small screens: a round arrow tucked in the corner, clear of the buttons. Big, tall screens: a
+          line under the buttons, lined up with the headline. Either way it melts away as soon as they start scrolling. */}
+      <motion.div
+        className="pointer-events-none fixed bottom-5 right-4 z-30 [@media(min-width:1024px)_and_(min-height:800px)]:inset-x-0 [@media(min-width:1024px)_and_(min-height:800px)]:right-0 [@media(min-width:1024px)_and_(min-height:800px)]:bottom-[4.75rem] [@media(min-width:1024px)_and_(min-height:800px)]:mx-auto [@media(min-width:1024px)_and_(min-height:800px)]:flex [@media(min-width:1024px)_and_(min-height:800px)]:max-w-7xl [@media(min-width:1024px)_and_(min-height:800px)]:justify-start [@media(min-width:1024px)_and_(min-height:800px)]:px-6"
+        style={{ opacity: cueOpacity }}
+      >
+        <motion.button
+          type="button"
+          onClick={nudge}
+          style={{ pointerEvents: cuePointer }}
+          aria-label="Scroll down to explore"
+          className={`group flex flex-col items-center gap-2 rounded-full [@media(min-width:1024px)_and_(min-height:800px)]:items-start [@media(min-width:1024px)_and_(min-height:800px)]:py-1 ${ring}`}
+          initial={{ opacity: 0, y: 12 }}
+          animate={ready ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 1, delay: 2.2, ease: EASE_OUT_EXPO }}
+        >
+          {/* Phones */}
+          <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-gold/50 bg-ink/80 shadow-[0_0_28px_-4px_rgba(255,183,3,0.45)] backdrop-blur [@media(min-width:1024px)_and_(min-height:800px)]:hidden">
+            <motion.svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5 fill-none stroke-gold"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              animate={{ y: [-3, 4, -3] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <path d="M12 5v13M6 13l6 6 6-6" />
+            </motion.svg>
+          </span>
+          {/* Tablet and desktop */}
+          <span className="font-cond hidden text-[0.7rem] uppercase tracking-[0.45em] text-white/70 transition-colors duration-300 group-hover:text-gold [@media(min-width:1024px)_and_(min-height:800px)]:block">
+            Scroll to explore
+          </span>
+          <span aria-hidden="true" className="relative hidden h-9 w-px overflow-hidden bg-white/20 [@media(min-width:1024px)_and_(min-height:800px)]:block">
+            <motion.span
+              className="absolute inset-x-0 top-0 block h-5 bg-gradient-to-b from-transparent via-gold to-transparent"
+              animate={{ y: [-20, 38] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </span>
+        </motion.button>
+      </motion.div>
 
       <Spotlight />
 
