@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,26 +6,31 @@
 
 html {
   color-scheme: dark;
-  scroll-behavior: smooth;
-  background-color: #050505;
+  background-color: #0C0908;
+}
+
+/* Lenis owns smooth scrolling, so native smooth scroll must stay off */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
   margin: 0;
-  background-color: #050505;
+  background-color: #0C0908;
   color: #F5F5F5;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@media (pointer: fine) {
-  body,
-  a,
-  button {
-    cursor: none;
-  }
 }
 
 #root {
@@ -38,8 +43,17 @@ body {
 }
 
 ::selection {
-  background: #ff4d1c;
-  color: #050505;
+  background: #D92B0B;
+  color: #FFFFFF;
+}
+
+/* Every plain button gets a tactile press. Motion buttons set their own whileTap. */
+button:not(:disabled) {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:not(:disabled):active {
+  transform: scale(0.95);
 }
 
 /* Premium film grain, fixed over the whole page */
@@ -50,12 +64,27 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 50;
-  opacity: 0.04;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 240px 240px;
 }
 
-/* CSS ember float */
+/* A slow breath for a single glow. Opacity only, never reaches full or zero, so it cannot flash. */
+@keyframes glowBreathe {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.glow-breathe {
+  animation: glowBreathe 6s ease-in-out infinite;
+}
+
+/* Embers drifting up inside the service illustrations */
 @keyframes floatUp {
   0% {
     transform: translateY(0) scale(1);
@@ -71,70 +100,6 @@ body {
   animation-name: floatUp;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-}
-
-/* Smoke plume: rises out of the fire, swells, twists, drifts sideways and dissolves.
-   Percentages are of the plume's own size, so one keyframe set suits every plume. */
-@keyframes smokePlume {
-  0% {
-    transform: translate3d(0, 25%, 0) scale(0.7) rotate(0deg);
-    opacity: 0;
-  }
-  18% {
-    opacity: var(--peak);
-  }
-  65% {
-    opacity: calc(var(--peak) * 0.7);
-  }
-  100% {
-    transform: translate3d(var(--dx), -160%, 0) scale(1.75) rotate(var(--rot));
-    opacity: 0;
-  }
-}
-
-.smoke-plume {
-  animation-name: smokePlume;
-  animation-timing-function: cubic-bezier(0.25, 0.1, 0.35, 1);
-  animation-iteration-count: infinite;
-  will-change: transform, opacity;
-  opacity: 0;
-}
-
-/* Sparks on a photo card: a short rise with a fade, in the card's own pixels */
-@keyframes emberRise {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(var(--sx, 12px), -240px, 0) scale(0.3);
-    opacity: 0;
-  }
-}
-
-.ember-rise {
-  animation-name: emberRise;
-  animation-timing-function: ease-out;
-  animation-iteration-count: infinite;
-  opacity: 0;
-}
-
-/* Heat coming up off the bottom edge of a photo */
-@keyframes fireGlow {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.fire-glow {
-  animation: fireGlow 3.6s ease-in-out infinite;
 }
 
 /* Grill theme: faint sear marks across a surface, which glow ember when you hover it */
@@ -160,28 +125,247 @@ body {
   background-image: repeating-linear-gradient(
     125deg,
     transparent 0 22px,
-    rgba(255, 77, 28, 0.16) 22px 24px
+    rgba(255, 106, 19, 0.16) 22px 24px
   );
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .glow-breathe {
+    animation: none;
+  }
+
   .ember-float {
     animation: none;
     opacity: 0;
   }
 
-  .smoke-plume {
+  .rays,
+  .bob {
     animation: none;
-    opacity: 0.2;
-  }
-
-  .ember-rise {
-    animation: none;
-    opacity: 0;
-  }
-
-  .fire-glow {
-    animation: none;
-    opacity: 0.8;
   }
 }
+
+
+/* Sunburst rays that turn very slowly behind a bright section */
+@keyframes spinSlow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rays {
+  background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255, 255, 255, 0.2) 0deg 7deg, transparent 7deg 15deg);
+  animation: spinSlow 140s linear infinite;
+}
+
+/* Printed halftone dots, for a screen printed poster feel */
+.halftone {
+  background-image: radial-gradient(rgba(20, 16, 14, 0.2) 1.4px, transparent 1.6px);
+  background-size: 14px 14px;
+}
+
+.halftone-light {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1.4px, transparent 1.6px);
+  background-size: 14px 14px;
+}
+
+/* Paper, for the cream sections */
+.paper {
+  background-color: #F7F3EE;
+}
+
+/* Slow drift for floating stickers */
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-10px) rotate(calc(var(--r, 0deg) + 3deg));
+  }
+}
+
+.bob {
+  animation: bob 5s ease-in-out infinite;
+}
+
+/* The dashed yellow centre line of the road strip, drifting past like traffic */
+@keyframes drive {
+  to {
+    background-position: -112px 0;
+  }
+}
+
+.road-dash {
+  background-image: repeating-linear-gradient(90deg, #ff6a13 0 56px, transparent 56px 112px);
+  animation: drive 3s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .road-dash {
+    animation: none;
+  }
+}
+
+/* Smoke behind the sections: soft billows and thin curls that rise, spread and fade */
+@keyframes smokeRise {
+  0% {
+    transform: translate3d(0, 25%, 0) scale(0.7);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(8%, -85%, 0) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.smoke-plume {
+  animation: smokeRise 20s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes wispRise {
+  0% {
+    transform: translate3d(0, 30%, 0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(14px, -45%, 0);
+    opacity: 0;
+  }
+}
+
+.smoke-wisp {
+  animation: wispRise 12s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smoke-plume,
+  .smoke-wisp {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* Small labels in the condensed face read best as tracked capitals */
+.font-marker,
+.font-cond {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+}
+
+/* Headlines use the high contrast serif, tightened a touch */
+.font-display {
+  letter-spacing: -0.01em;
+  font-weight: 800;
+}
+
+/* The voice for lead sentences under a heading: a refined italic serif that pairs with the headline face */
+.font-lead {
+  font-family: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* A fine ember hairline, used instead of heavy borders */
+.hairline-ember {
+  background-image: linear-gradient(90deg, transparent, rgba(255, 106, 19, 0.7), transparent);
+}
+
+/* Warm light coming up off the fire, for the black sections */
+.ember-glow {
+  background-image:
+    radial-gradient(60% 55% at 50% 100%, rgba(255, 90, 31, 0.28), transparent 70%),
+    radial-gradient(40% 40% at 85% 10%, rgba(217, 43, 11, 0.16), transparent 70%);
+}
+
+/* Embers: the lane is as tall as the section, so sliding it up by its own height carries the spark to the top */
+@keyframes emberLane {
+  0% {
+    transform: translate3d(0, 6%, 0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(var(--dx, 20px), -100%, 0);
+    opacity: 0;
+  }
+}
+
+.ember-lane {
+  animation: emberLane 11s ease-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ember-lane {
+    display: none;
+  }
+}
+
+/* The words on the booking seal circle once a minute */
+.spin-slow {
+  animation: spinSlow 40s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin-slow {
+    animation: none;
+  }
+}
+
+/* The badge aura: the glow breathes slowly */
+@keyframes auraBreath {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+/* The navbar badge: a soft band of light sweeps across it, and the rim catches a little warmth at the same moment */
+.nav-gleam {
+  background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.08) 38%, rgba(255, 244, 232, 0.6) 50%, rgba(255, 255, 255, 0.08) 62%, transparent 80%);
+  mix-blend-mode: soft-light;
+  transform: translateX(-100%) skewX(-18deg);
+  animation: navGleam 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.nav-gleam-ring {
+  box-shadow: 0 0 0 1px rgba(255, 138, 61, 0.3), 0 0 14px rgba(255, 106, 19, 0.28);
+  animation: navRing 6s ease-in-out infinite;
+}
+@keyframes navGleam {
+  0%, 55% { transform: translateX(-100%) skewX(-18deg); }
+  100% { transform: translateX(420%) skewX(-18deg); }
+}
+@keyframes navRing {
+  0%, 52%, 100% { opacity: 0.35; }
+  72% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-gleam { animation: none; opacity: 0; }
+  .nav-gleam-ring { animation: none; opacity: 0.5; }
+}
+
+/* Centred, letter spaced text: balance the gap that tracking leaves after the last letter */
+.balance-track::before,
+a[class*="rounded-full"][class*="uppercase"][class*="tracking-["]:not([class*="gap-"])::before,
+button[class*="rounded-full"][class*="uppercase"][class*="tracking-["]:not([class*="gap-"])::before,
+.text-center[class*="tracking-["]::before {
+  content: "\200B";
+}
+
+/* Typesetting care: headings break into even lines, paragraphs avoid leaving a single word alone on the last line */
+h1, h2, h3, .font-display, .font-lead { text-wrap: balance; }
+p, li { text-wrap: pretty; }

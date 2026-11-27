@@ -1,185 +1,283 @@
-import { useId } from 'react'
+import { motion } from "framer-motion";
+import { useId } from "react";
+import { FlameBroArt } from "./FlameBro";
 
-const WHITE = '#F4F4F4'
-const CIRCUMFERENCE = 2 * Math.PI * 96
+// The Smoky Bros badge: a black roadhouse seal with our flame bro in shades standing on a grill, a sunburst behind
+// him and a ribbon across the front.
+const INK = "#14100E";
+const CHILI = "#D92B0B";
+const SUN = "#FF6A13";
+const CREAM = "#FFFFFF";
+const FONT = { fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 800 };
 
-// Cast-iron grate bars across the ring, like a kettle grill seen from above
-const BARS = Array.from({ length: 10 }, (_, index) => 14 + index * 20)
+const RAYS = Array.from({ length: 18 }, (_, i) => {
+  const a0 = ((i * 360) / 18 - 90) * (Math.PI / 180);
+  const a1 = (((i + 0.5) * 360) / 18 - 90) * (Math.PI / 180);
+  const p = (a) =>
+    `${(120 + 160 * Math.cos(a)).toFixed(1)} ${(120 + 160 * Math.sin(a)).toFixed(1)}`;
+  return `M120 120 L${p(a0)} L${p(a1)} Z`;
+}).join(" ");
 
-// Sparks that lift off the coals and escape through the top of the ring.
-// x and drift are in logo units, delay is negative so they are already mid-flight on first paint.
-const SPARKS = [
-  { x: 58, drift: -9, size: 1.3, dur: 3.6, delay: 0.4 },
-  { x: 76, drift: 6, size: 1.7, dur: 4.4, delay: 1.9 },
-  { x: 92, drift: -4, size: 1.1, dur: 3.2, delay: 2.7 },
-  { x: 108, drift: 10, size: 1.5, dur: 4.8, delay: 0.9 },
-  { x: 124, drift: -7, size: 1.2, dur: 3.9, delay: 3.3 },
-  { x: 142, drift: 8, size: 1.6, dur: 4.2, delay: 1.4 },
-]
+const pop = (delay) => ({
+  initial: { scale: 0.4, opacity: 0 },
+  animate: { scale: 1, opacity: 1 },
+  transition: { type: "spring", stiffness: 260, damping: 15, delay },
+});
 
-function Wordmark({ fill, ...rest }) {
-  return (
-    <g fill={fill} fontFamily="Inter, Arial, sans-serif" fontSize="28" fontWeight="600" textAnchor="middle" {...rest}>
-      <text x="100" y="96" textLength="112" lengthAdjust="spacing">
-        SMOKY
-      </text>
-      <text x="100" y="128" textLength="112" lengthAdjust="spacing">
-        BROS
-      </text>
-    </g>
-  )
-}
+const centred = { transformBox: "fill-box", transformOrigin: "center" };
 
-// With `alive`, the mark is a working grill: coals pulse under the grate, sparks lift off,
-// the lines shimmer in the heat, an ember travels round the ring, and the letters catch
-// a flickering glow from underneath.
-export default function Logo({ className = 'h-28 w-28', alive = false }) {
-  const uid = useId().replace(/:/g, '')
-  const heat = `heat-${uid}`
-  const bloom = `bloom-${uid}`
-  const coals = `coals-${uid}`
-  const bowl = `bowl-${uid}`
+// Embers that float up off the grill. Fixed values, so every badge looks the same.
+const EMBERS = [
+  { x: 84, size: 2.6, delay: 0, dur: 3.2 },
+  { x: 100, size: 2, delay: 1.1, dur: 2.8 },
+  { x: 118, size: 3, delay: 0.5, dur: 3.6 },
+  { x: 138, size: 2.2, delay: 1.8, dur: 3 },
+  { x: 154, size: 2.8, delay: 0.9, dur: 3.4 },
+  { x: 128, size: 1.8, delay: 2.4, dur: 2.6 },
+];
+
+/**
+ * @param intro  Build the badge piece by piece, for the boot loader
+ * @param alive  Spin the sunburst, flicker the fire, and float embers
+ * @param delay  Seconds to wait before the intro starts
+ */
+export default function Logo({
+  className = "h-40 w-40",
+  intro = false,
+  alive = false,
+  delay = 0,
+}) {
+  const uid = useId().replace(/:/g, "");
+  const id = (name) => `${name}${uid}`;
+  const p = (at) => (intro ? pop(delay + at) : { initial: false });
 
   return (
     <svg
-      viewBox="0 0 200 200"
-      className={className}
+      viewBox="-6 -6 252 252"
       role="img"
-      aria-label="Smoky Bros"
-      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Smoky Bros BBQ, slow smoked"
+      className={className}
+      fill="none"
       overflow="visible"
     >
-      {alive && (
-        <defs>
-          <filter id={heat} x="-10%" y="-10%" width="120%" height="120%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.006 0.014" numOctaves="2" seed="4" result="noise">
-              <animate
-                attributeName="baseFrequency"
-                dur="9s"
-                values="0.006 0.014;0.01 0.022;0.006 0.014"
-                repeatCount="indefinite"
-              />
-            </feTurbulence>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-          <filter id={bloom} x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="3.4" />
-          </filter>
-          <radialGradient id={coals} cx="50%" cy="78%" r="62%">
-            <stop offset="0" stopColor="#FF4D1C" stopOpacity="1" />
-            <stop offset="0.5" stopColor="#E0420F" stopOpacity="0.7" />
-            <stop offset="1" stopColor="#C8360A" stopOpacity="0" />
-          </radialGradient>
-          <clipPath id={bowl}>
-            <circle cx="100" cy="100" r="94" />
-          </clipPath>
-        </defs>
-      )}
+      <defs>
+        <linearGradient id={id("coal")} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#FF5A1F" stopOpacity="0" />
+          <stop offset="0.6" stopColor="#FF5A1F" stopOpacity="0.9" />
+          <stop offset="1" stopColor="#FF6A13" />
+        </linearGradient>
+        <radialGradient id={id("glow")} cx="0.5" cy="0.62" r="0.55">
+          <stop offset="0" stopColor="#FF6A10" stopOpacity="0.75" />
+          <stop offset="0.55" stopColor="#FF5A1F" stopOpacity="0.22" />
+          <stop offset="1" stopColor="#FF5A1F" stopOpacity="0" />
+        </radialGradient>
+        <clipPath id={id("disc")}>
+          <circle cx="120" cy="120" r="76" />
+        </clipPath>
+        {/* Lettering arcs: each baseline is set from its cap height so the capitals sit on the centre line of the band, r 92 */}
+        <path id={id("top")} d="M 33.7 120 A 86.3 86.3 0 0 1 206.3 120" />
+        <path id={id("bot")} d="M 23.9 120 A 96.1 96.1 0 0 0 216.1 120" />
+        {/* The ribbon's own centreline (163 at the ends, 171 in the middle), dropped by half a cap height so the capitals sit dead centre */}
+        <path id={id("rib")} d="M 18 170.75 Q 120 184.75 222 170.75" />
+      </defs>
 
-      {alive && (
-        <>
-          {/* Coals: a bed of heat that breathes and flickers, lighting the gaps between the bars */}
-          <g clipPath={`url(#${bowl})`}>
-            <circle cx="100" cy="100" r="94" fill={`url(#${coals})`} opacity="0.7">
-              <animate attributeName="opacity" values="0.45;0.85;0.55;0.95;0.5;0.8;0.45" dur="4.3s" repeatCount="indefinite" />
-            </circle>
-            {/* The grate, dark against the glow, with a thin highlight on each bar */}
-            {BARS.map((y) => (
-              <g key={y}>
-                <line x1="0" x2="200" y1={y} y2={y} stroke="#050505" strokeWidth="6" />
-                <line x1="0" x2="200" y1={y - 2.6} y2={y - 2.6} stroke="#FFFFFF" strokeOpacity="0.14" strokeWidth="0.8" />
-              </g>
-            ))}
-            <line x1="100" x2="100" y1="0" y2="200" stroke="#050505" strokeWidth="3" />
-          </g>
-
-          {/* Sparks lift off the coals and slip out over the top of the ring */}
-          {SPARKS.map((spark) => (
-            <circle key={spark.x} cx={spark.x} cy="160" r={spark.size} fill="#FFB070">
-              <animate attributeName="cy" values="165;-26" dur={`${spark.dur}s`} begin={`-${spark.delay}s`} repeatCount="indefinite" />
-              <animate
-                attributeName="cx"
-                values={`${spark.x};${spark.x + spark.drift}`}
-                dur={`${spark.dur}s`}
-                begin={`-${spark.delay}s`}
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="opacity"
-                values="0;1;0.9;0"
-                keyTimes="0;0.2;0.7;1"
-                dur={`${spark.dur}s`}
-                begin={`-${spark.delay}s`}
-                repeatCount="indefinite"
-              />
-            </circle>
-          ))}
-        </>
-      )}
-
-      <g filter={alive ? `url(#${heat})` : undefined}>
-        <circle cx="100" cy="100" r="96" fill="none" stroke={WHITE} strokeWidth="3" />
-        {/* The box is solid when alive, so the grate shows only above and below it, like a lid plate */}
-        <rect
-          x="34"
-          y="58"
-          width="132"
-          height="84"
-          fill={alive ? 'rgba(5, 5, 5, 0.86)' : 'none'}
-          stroke={WHITE}
-          strokeWidth="2.4"
+      {/* Seal and ring */}
+      <motion.g style={centred} {...p(0)}>
+        <circle cx="120" cy="120" r="117" fill={INK} />
+        <circle cx="120" cy="120" r="111" stroke={SUN} strokeWidth="2" />
+        <circle cx="120" cy="120" r="92" stroke="#1A0E0B" strokeWidth="28" />
+        <circle cx="120" cy="120" r="106.5" stroke={CREAM} strokeOpacity="0.45" strokeWidth="0.8" />
+        <circle cx="120" cy="120" r="77.5" stroke={SUN} strokeWidth="1.2" />
+        <text
+          style={FONT}
+          fontSize="16"
+          letterSpacing="3.2"
+          fill={CREAM}
+          textAnchor="middle"
+        >
+          <textPath href={`#${id("top")}`} startOffset="50%">
+            SLOW SMOKED BBQ
+          </textPath>
+        </text>
+        <text
+          style={FONT}
+          fontSize="11.5"
+          letterSpacing="3.2"
+          fill={CREAM}
+          textAnchor="middle"
+        >
+          <textPath href={`#${id("bot")}`} startOffset="50%">
+            MAIDENHEAD
+          </textPath>
+        </text>
+        <polygon
+          transform="translate(4 0)"
+          points="24,114 26.5,119.5 32,120 27.8,123.6 29,129 24,126.2 19,129 20.2,123.6 16,120 21.5,119.5"
+          fill={SUN}
         />
-      </g>
+        <polygon
+          transform="translate(-4 0)"
+          points="216,114 218.5,119.5 224,120 219.8,123.6 221,129 216,126.2 211,129 212.2,123.6 208,120 213.5,119.5"
+          fill={SUN}
+        />
+      </motion.g>
 
-      {alive && (
-        <>
-          {/* The ember, with a faint comet tail, circling the ring */}
-          <g>
-            <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="7s" repeatCount="indefinite" />
-            <circle
-              cx="100"
-              cy="100"
-              r="96"
-              fill="none"
-              stroke="#FF4D1C"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeDasharray={`70 ${CIRCUMFERENCE}`}
-              opacity="0.35"
-              transform="rotate(-42 100 100)"
-            />
-            <circle
-              cx="100"
-              cy="100"
-              r="96"
-              fill="none"
-              stroke="#FF4D1C"
-              strokeWidth="7"
-              strokeLinecap="round"
-              strokeDasharray={`16 ${CIRCUMFERENCE}`}
-              filter={`url(#${bloom})`}
-            />
-            <circle
-              cx="100"
-              cy="100"
-              r="96"
-              fill="none"
-              stroke="#FFD2B0"
-              strokeWidth="3.4"
-              strokeLinecap="round"
-              strokeDasharray={`10 ${CIRCUMFERENCE}`}
-            />
+      {/* Sunburst disc */}
+      <motion.g style={centred} {...p(0.25)}>
+        <circle cx="120" cy="120" r="76" fill="#1C1613" />
+        <g clipPath={`url(#${id("disc")})`}>
+          <motion.g
+            style={{ transformOrigin: "120px 120px" }}
+            animate={alive ? { rotate: 360 } : undefined}
+            transition={
+              alive
+                ? { duration: 90, ease: "linear", repeat: Infinity }
+                : undefined
+            }
+          >
+            <path d={RAYS} fill="#FF6A13" opacity="0.16" />
+          </motion.g>
+        </g>
+        <circle cx="120" cy="120" r="76" fill={`url(#${id("glow")})`} />
+        {/* The grill: a dark pit with glowing coals and a steel grate the flame bro stands on */}
+        <g clipPath={`url(#${id("disc")})`}>
+          <rect x="40" y="128" width="160" height="80" fill={INK} />
+          <motion.rect
+            x="40"
+            y="130"
+            width="160"
+            height="32"
+            fill={`url(#${id("coal")})`}
+            animate={alive ? { opacity: [0.75, 1, 0.8, 1, 0.75] } : undefined}
+            transition={
+              alive
+                ? { duration: 1.8, ease: "easeInOut", repeat: Infinity }
+                : undefined
+            }
+          />
+          <g stroke="#C9D1D6" strokeLinecap="round">
+            <path d="M40 129 H200" stroke={INK} strokeWidth="7" />
+            <path d="M40 129 H200" strokeWidth="4" />
+            {[48, 62, 76, 90, 104, 118, 132, 146, 160, 174, 188, 202].map(
+              (x) => (
+                <g key={x}>
+                  <path
+                    d={`M${x} 131 L${120 + (x - 120) * 1.12} 160`}
+                    stroke={INK}
+                    strokeWidth="5.4"
+                  />
+                  <path
+                    d={`M${x} 131 L${120 + (x - 120) * 1.12} 160`}
+                    strokeWidth="3"
+                  />
+                </g>
+              ),
+            )}
           </g>
+        </g>
+        <circle cx="120" cy="120" r="76" stroke={INK} strokeWidth="3" />
+        <circle cx="120" cy="120" r="72" stroke={SUN} strokeWidth="1.2" opacity="0.8" />
+      </motion.g>
 
-          {/* Firelight under the letters, flickering out of step with the coals */}
-          <g filter={`url(#${bloom})`} opacity="0.4">
-            <animate attributeName="opacity" values="0.15;0.55;0.28;0.62;0.2;0.5;0.15" dur="3.9s" repeatCount="indefinite" />
-            <Wordmark fill="#FF4D1C" />
-          </g>
-        </>
-      )}
+      {/* Embers floating up off the grill */}
+      {alive &&
+        EMBERS.map((ember) => (
+          <motion.circle
+            key={ember.x}
+            cx={ember.x}
+            cy="128"
+            r={ember.size}
+            fill="#FF6A13"
+            stroke={INK}
+            strokeWidth="0.8"
+            initial={{ opacity: 0 }}
+            animate={{
+              y: [0, -50, -86],
+              x: [0, ember.size * 3, -ember.size * 2],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: ember.dur,
+              delay: ember.delay,
+              ease: "easeOut",
+              repeat: Infinity,
+            }}
+          />
+        ))}
 
-      <Wordmark fill="#F7F7F7" />
+      {/* The flame bro, on his own with no props, standing on the grate */}
+      <motion.g style={centred} {...p(0.5)}>
+        <g transform="translate(70.5 45) scale(0.49)">
+          <FlameBroArt uid={uid} alive={alive} />
+        </g>
+      </motion.g>
+
+      {/* Ribbon */}
+      <motion.g
+        style={centred}
+        {...(intro
+          ? {
+              initial: { scaleX: 0, opacity: 0 },
+              animate: { scaleX: 1, opacity: 1 },
+              transition: {
+                type: "spring",
+                stiffness: 220,
+                damping: 18,
+                delay: delay + 0.8,
+              },
+            }
+          : { initial: false })}
+      >
+        <g>
+          <path
+            d="M4 152 L32 146 L32 182 L4 188 L14 170 Z"
+            fill="#A81F06"
+            stroke={INK}
+            strokeWidth="3"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M236 152 L208 146 L208 182 L236 188 L226 170 Z"
+            fill="#A81F06"
+            stroke={INK}
+            strokeWidth="3"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M18 146 Q120 160 222 146 L222 182 Q120 196 18 182 Z"
+            fill={CHILI}
+            stroke={INK}
+            strokeWidth="2"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M22 150 Q120 164 218 150"
+            stroke={CREAM}
+            strokeWidth="1.5"
+            opacity=".7"
+          />
+          <path
+            d="M22 178 Q120 192 218 178"
+            stroke={CREAM}
+            strokeWidth="1.5"
+            opacity=".7"
+          />
+          <text
+            style={FONT}
+            fontSize="19"
+            letterSpacing="2.2"
+            fill={CREAM}
+            stroke={INK}
+            strokeWidth="0.6"
+            paintOrder="stroke"
+            textAnchor="middle"
+          >
+            <textPath href={`#${id("rib")}`} startOffset="50%">
+              SMOKY BROS
+            </textPath>
+          </text>
+        </g>
+      </motion.g>
     </svg>
-  )
+  );
 }

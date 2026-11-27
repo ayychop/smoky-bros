@@ -24,36 +24,36 @@ export default function DatePicker({ value, onChange, error }) {
 
   return (
     <div>
-      <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-ash/55">
-        Event date <span className="text-emberGlow">*</span>
+      <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.2em] text-ink">
+        Event date <span className="text-chili">*</span>
       </p>
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md sm:p-6">
+      <div className="rounded-2xl border border-ink bg-white p-5 shadow-sticker sm:p-6">
         <div className="mb-5 flex items-center justify-between">
           <button
             type="button"
             aria-label="Previous month"
             disabled={atEarliest}
             onClick={() => step(-1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-ash transition-colors hover:border-ember disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emberGlow"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-ink bg-cream text-ink transition-colors hover:bg-sun disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-chili"
           >
             <ChevronLeft size={18} aria-hidden="true" />
           </button>
-          <p aria-live="polite" className="font-serif text-xl tracking-tight text-ash">
+          <p aria-live="polite" className="font-display text-xl text-ink">
             {MONTHS[cursor.m]} {cursor.y}
           </p>
           <button
             type="button"
             aria-label="Next month"
             onClick={() => step(1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-ash transition-colors hover:border-ember focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emberGlow"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-ink bg-cream text-ink transition-colors hover:bg-sun focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-chili"
           >
             <ChevronRight size={18} aria-hidden="true" />
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-[10px] uppercase tracking-[0.2em] text-ash/35">
+        <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-extrabold uppercase tracking-[0.16em] text-ink/60">
           {WEEKDAYS.map((day) => (
-            <span key={day} className="py-2">
+            <span key={day} className="py-2 pl-[0.16em]">
               {day}
             </span>
           ))}
@@ -75,12 +75,12 @@ export default function DatePicker({ value, onChange, error }) {
                 aria-pressed={selected}
                 aria-label={`${formatLongDate(iso)}${booked ? ', unavailable' : ''}`}
                 onClick={() => onChange(iso)}
-                className={`relative aspect-square rounded-full text-sm transition-[background-color,color,box-shadow] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emberGlow ${
-                  selected
-                    ? 'bg-ember font-semibold text-white shadow-[0_0_24px_rgba(200,54,10,0.65)]'
+                className={`relative aspect-square rounded-full text-sm transition-[background-color,color,box-shadow] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-chili ${
+ selected
+                    ? 'border border-ink bg-chili font-bold text-cream shadow-sticker'
                     : disabled
-                      ? 'cursor-not-allowed text-ash/20'
-                      : 'text-ash hover:bg-ember/20 hover:text-white'
+                      ? 'cursor-not-allowed text-ink/25'
+                      : 'font-semibold text-ink hover:bg-sun'
                 } ${booked ? 'line-through' : ''}`}
               >
                 {day}
@@ -89,17 +89,17 @@ export default function DatePicker({ value, onChange, error }) {
           })}
         </div>
 
-        <p className="mt-5 flex items-center gap-4 text-[11px] text-ash/40">
+        <p className="mt-5 flex items-center gap-4 text-xs font-semibold text-ink/65">
           <span className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-ember" /> Selected
+            <span className="h-3 w-3 rounded-full border-2 border-ink bg-chili" /> Selected
           </span>
           <span className="flex items-center gap-2">
-            <span className="h-px w-3 bg-ash/40" /> Unavailable
+            <span className="h-[2px] w-3 bg-ink/50" /> Unavailable
           </span>
         </p>
       </div>
       {error && (
-        <p role="alert" className="mt-3 text-sm text-red-300">
+        <p role="alert" className="mt-3 text-sm font-bold text-chili">
           {error}
         </p>
       )}

@@ -1,61 +1,65 @@
-// Procedural smoke with no libraries. Each plume is a soft noise puff that rises from the fire,
-// swells, drifts sideways and dissolves, on its own clock. Thresholded noise leaves clear gaps inside
-// each puff so it reads as smoke and not as a flat grey veil, and a radial mask on every plume
-// removes its edges, so there are no tiles, seams or boxes anywhere.
-
-function puff(seed, frequency) {
-  const svg =
-    `<svg xmlns='http://www.w3.org/2000/svg' width='768' height='768'>` +
-    `<filter id='s' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'>` +
-    `<feTurbulence type='fractalNoise' baseFrequency='${frequency}' numOctaves='5' seed='${seed}'/>` +
-    `<feColorMatrix values='0 0 0 0 0.96  0 0 0 0 0.92  0 0 0 0 0.88  3.4 0 0 0 -1.35'/>` +
-    `</filter><rect width='100%' height='100%' filter='url(#s)'/></svg>`
-  const encoded = svg.replace(/#/g, '%23').replace(/</g, '%3C').replace(/>/g, '%3E')
-  return `url("data:image/svg+xml,${encoded}")`
-}
-
-const TEXTURES = [puff(3, '0.006 0.011'), puff(11, '0.008 0.014'), puff(27, '0.005 0.01')]
-
-const SOFT_EDGE = 'radial-gradient(closest-side, #000 22%, transparent 100%)'
-
-// left: where it starts (%), size: px, dx: sideways drift, rot: twist, peak: strongest opacity
+// Smoke and embers drifting up behind a section, so the whole site feels like it sits over a live fire.
+// Drop it in as the first child of a section that has `relative isolate overflow-hidden`.
+// Positions are fixed numbers, so server and browser always draw the same thing.
 const PLUMES = [
-  { left: 50, size: 700, duration: 17, delay: 0, dx: '6%', rot: '14deg', peak: 0.5, texture: 0 },
-  { left: 28, size: 560, duration: 21, delay: 3.5, dx: '-12%', rot: '-18deg', peak: 0.42, texture: 1 },
-  { left: 72, size: 620, duration: 19, delay: 7, dx: '14%', rot: '20deg', peak: 0.44, texture: 2 },
-  { left: 40, size: 760, duration: 24, delay: 10.5, dx: '-6%', rot: '-10deg', peak: 0.4, texture: 0 },
-  { left: 62, size: 520, duration: 15, delay: 13, dx: '10%', rot: '24deg', peak: 0.36, texture: 1 },
-  { left: 16, size: 600, duration: 23, delay: 17, dx: '8%', rot: '12deg', peak: 0.34, texture: 2 },
-  { left: 84, size: 580, duration: 20, delay: 20, dx: '-10%', rot: '-22deg', peak: 0.34, texture: 0 },
-  { left: 52, size: 480, duration: 14, delay: 23, dx: '-4%', rot: '16deg', peak: 0.3, texture: 1 },
+  { left: '2%', size: 26, delay: 0, dur: 19 },
+  { left: '30%', size: 32, delay: -7, dur: 24 },
+  { left: '58%', size: 24, delay: -13, dur: 21 },
+  { left: '82%', size: 30, delay: -4, dur: 26 },
 ]
 
-// count: how many plumes to render. scale: shrinks them for small surfaces such as a card.
-export default function Smoke({ className = '', strength = 1, count = PLUMES.length, scale = 1 }) {
+const EMBERS = [
+  { left: '6%', size: 3, delay: 0, dur: 9, dx: '30px' },
+  { left: '13%', size: 2, delay: -4, dur: 12, dx: '-24px' },
+  { left: '21%', size: 4, delay: -7, dur: 10, dx: '40px' },
+  { left: '33%', size: 2, delay: -2, dur: 13, dx: '-30px' },
+  { left: '41%', size: 3, delay: -9, dur: 11, dx: '26px' },
+  { left: '50%', size: 2, delay: -5, dur: 14, dx: '-36px' },
+  { left: '58%', size: 4, delay: -1, dur: 10, dx: '34px' },
+  { left: '67%', size: 2, delay: -8, dur: 12, dx: '-22px' },
+  { left: '74%', size: 3, delay: -3, dur: 9, dx: '28px' },
+  { left: '83%', size: 2, delay: -6, dur: 13, dx: '-34px' },
+  { left: '90%', size: 4, delay: -10, dur: 11, dx: '24px' },
+  { left: '96%', size: 2, delay: -2, dur: 10, dx: '-20px' },
+]
+
+/**
+ * @param tone   "dark" for black sections (white smoke and embers), "light" for white sections (grey smoke)
+ * @param plumes How many soft billows to draw, 0 to 4
+ * @param embers How many glowing sparks to float up, 0 to 12. Dark sections get 8 unless told otherwise
+ */
+// eslint-disable-next-line no-unused-vars
+export default function Smoke({ tone = 'dark', plumes = 3, embers, wisps, className = '' }) {
+  const billow = tone === 'dark' ? 'rgba(255,255,255,0.09)' : 'rgba(20,16,14,0.06)'
+  const sparks = embers ?? (tone === 'dark' ? 8 : 0)
+
   return (
-    <div aria-hidden="true" className={`pointer-events-none overflow-hidden ${className}`} style={{ opacity: strength }}>
-      {PLUMES.slice(0, count).map((plume, index) => (
-        <div
-          key={index}
-          className="smoke-plume absolute"
+    <div aria-hidden="true" className={`pointer-events-none absolute inset-0 -z-10 overflow-hidden ${className}`}>
+      {PLUMES.slice(0, plumes).map((plume) => (
+        <span
+          key={plume.left}
+          className="smoke-plume absolute bottom-0 block rounded-full"
           style={{
-            left: `${plume.left}%`,
-            bottom: '-14%',
-            width: plume.size * scale,
-            height: plume.size * scale,
-            marginLeft: (-plume.size * scale) / 2,
-            backgroundImage: TEXTURES[plume.texture],
-            backgroundSize: '100% 100%',
-            maskImage: SOFT_EDGE,
-            WebkitMaskImage: SOFT_EDGE,
-            animationDuration: `${plume.duration}s`,
-            // Negative delay, so the sky is already full of smoke on first paint
-            animationDelay: `-${plume.delay}s`,
-            '--dx': plume.dx,
-            '--rot': plume.rot,
-            '--peak': plume.peak,
+            left: plume.left,
+            width: `${plume.size}rem`,
+            height: `${plume.size}rem`,
+            background: `radial-gradient(circle, ${billow} 0%, transparent 68%)`,
+            animationDuration: `${plume.dur}s`,
+            animationDelay: `${plume.delay}s`,
           }}
         />
+      ))}
+      {EMBERS.slice(0, sparks).map((ember) => (
+        <span
+          key={ember.left}
+          className="ember-lane absolute bottom-0 block h-full w-0"
+          style={{ left: ember.left, animationDuration: `${ember.dur}s`, animationDelay: `${ember.delay}s`, '--dx': ember.dx }}
+        >
+          <span
+            className="absolute bottom-0 block rounded-full bg-sun"
+            style={{ width: ember.size, height: ember.size, boxShadow: '0 0 8px 2px rgba(255,106,19,0.8)' }}
+          />
+        </span>
       ))}
     </div>
   )

@@ -8,7 +8,7 @@ import MagneticButton from '../MagneticButton'
 
 const TOPICS = [
   { id: 'private', label: 'Private catering', blurb: 'An event at home or a venue.', Icon: Flame },
-  { id: 'street', label: 'Street food', blurb: 'Pop-ups, markets and launches.', Icon: Store },
+  { id: 'street', label: 'Street food', blurb: 'Pop ups, markets and launches', Icon: Store },
   { id: 'partnership', label: 'Partnership', blurb: 'Collabs, residencies, brands.', Icon: Handshake },
   { id: 'other', label: 'Something else', blurb: 'Questions, ideas, anything.', Icon: MessageCircle },
 ]
@@ -111,7 +111,7 @@ export default function EnquiryForm() {
         <button
           type="submit"
           disabled={sending}
-          className="inline-flex items-center gap-2 rounded-full bg-ember px-10 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(200,54,10,0.6)] disabled:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emberGlow"
+          className="inline-flex items-center gap-2 rounded-full border border-ink bg-chili px-10 py-4 text-xs font-extrabold uppercase tracking-[0.18em] text-cream shadow-sticker transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sticker-lg disabled:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
         >
           {sending ? (
             <>

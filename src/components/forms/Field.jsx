@@ -1,7 +1,7 @@
 import { useId } from 'react'
 
 const base =
-  'w-full rounded-xl border bg-white/5 px-4 py-3.5 text-base text-ash placeholder:text-ash/30 backdrop-blur-md transition-[border-color,box-shadow] duration-300 focus:outline-none focus:border-ember focus:shadow-[0_0_0_3px_rgba(200,54,10,0.25)]'
+  'w-full rounded-xl border bg-white px-4 py-3.5 text-base font-medium text-ink placeholder:text-ink/40 transition-shadow duration-200 focus:outline-none shadow-sticker'
 
 export default function Field({
   label,
@@ -31,22 +31,22 @@ export default function Field({
     inputMode,
     'aria-invalid': error ? true : undefined,
     'aria-describedby': describedBy,
-    className: `${base} ${error ? 'border-red-400/70' : 'border-white/10'}`,
+    className: `${base} ${error ? 'border-chili' : 'border-ink'}`,
   }
 
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-[11px] uppercase tracking-[0.28em] text-ash/55">
+      <label htmlFor={id} className="mb-2 block text-xs font-extrabold uppercase tracking-[0.2em] text-ink">
         {label}
-        {required && <span className="text-emberGlow"> *</span>}
+        {required && <span className="text-chili"> *</span>}
       </label>
       {multiline ? <textarea rows={rows} {...props} /> : <input type={type} {...props} />}
       {error ? (
-        <p id={`${id}-error`} role="alert" className="mt-2 text-sm text-red-300">
+        <p id={`${id}-error`} role="alert" className="mt-2 text-sm font-bold text-chili">
           {error}
         </p>
       ) : hint ? (
-        <p id={`${id}-hint`} className="mt-2 text-xs text-ash/40">
+        <p id={`${id}-hint`} className="mt-2 text-xs font-medium text-ink/65">
           {hint}
         </p>
       ) : null}

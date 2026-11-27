@@ -3,5 +3,5 @@ const ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
 
 export function makeReference(prefix) {
   const code = Array.from({ length: 5 }, () => ALPHABET[Math.floor(Math.random() * ALPHABET.length)]).join('')
-  return `${prefix}-${code}`
+  return `${prefix} ${code}`
 }

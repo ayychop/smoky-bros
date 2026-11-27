@@ -2,6 +2,7 @@ import { animate, motion, useMotionValue, useSpring } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { EASE_OUT_EXPO } from '../easing'
 
+// Pulls toward the pointer when it gets close, and presses in when tapped
 export default function MagneticButton({ children, className = '' }) {
   const ref = useRef(null)
   const engaged = useRef(false)
@@ -45,7 +46,12 @@ export default function MagneticButton({ children, className = '' }) {
   }, [x, y])
 
   return (
-    <motion.div ref={ref} className={`inline-flex ${className}`} style={{ x: springX, y: springY }}>
+    <motion.div
+      ref={ref}
+      className={`inline-flex ${className}`}
+      style={{ x: springX, y: springY }}
+      whileTap={{ scale: 0.95 }}
+    >
       {children}
     </motion.div>
   )

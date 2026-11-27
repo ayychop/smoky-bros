@@ -1,21 +1,20 @@
-import { EVENT_TYPES, MENU_ITEMS, PRICE_FROM } from '../../data/site'
+import { EVENT_TYPES, MENU_ITEMS } from '../../data/site'
 import { formatLongDate } from '../../lib/dates'
 
 function estimateFor(data) {
-  if (data.type === 'street') return { label: 'Priced per event', detail: 'We will quote your pop-up once we know the format.' }
-  if (!data.type) return { label: `From £${PRICE_FROM} a head`, detail: 'Pick an event type to see a guide price.' }
-  const total = data.guests * PRICE_FROM
+  if (data.type === 'street') return { label: 'Bespoke Quotes', detail: 'We will quote your pop up once we know the format.' }
+  if (!data.type) return { label: 'Bespoke Quotes', detail: 'Every event is priced around your guests and your menu.' }
   return {
-    label: `From £${total.toLocaleString('en-GB')}`,
-    detail: `${data.guests} guests at £${PRICE_FROM} a head. A guide only, the final quote follows your request.`,
+    label: 'Bespoke Quotes',
+    detail: `Cooked around ${data.guests} guests. Your personal quote follows your request.`,
   }
 }
 
 function Row({ label, value }) {
   return (
-    <div className="flex items-start justify-between gap-6 border-b border-white/10 py-4 last:border-b-0">
-      <dt className="text-[11px] uppercase tracking-[0.26em] text-ash/45">{label}</dt>
-      <dd className={`max-w-[60%] text-right text-sm ${value ? 'text-ash' : 'text-ash/25'}`}>{value || 'Not chosen yet'}</dd>
+    <div className="flex items-start justify-between gap-6 border-b border-dashed border-cream/25 py-4 last:border-b-0">
+      <dt className="text-xs font-extrabold uppercase tracking-[0.2em] text-cream/75">{label}</dt>
+      <dd className={`max-w-[60%] text-right text-sm font-semibold ${value ? 'text-cream' : 'text-cream/45'}`}>{value || 'Not chosen yet'}</dd>
     </div>
   )
 }
@@ -26,16 +25,9 @@ export default function BookingSummary({ data }) {
   const estimate = estimateFor(data)
 
   return (
-    <aside
-      aria-label="Booking summary"
-      className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 p-7 backdrop-blur-xl"
-    >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(ellipse_at_50%_120%,rgba(255,77,28,0.28)_0%,transparent_70%)]"
-      />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-      <p className="relative text-xs uppercase tracking-[0.34em] text-emberGlow">Your booking</p>
+    <aside aria-label="Booking summary" className="relative overflow-hidden rounded-3xl border border-ink bg-teal p-7 text-cream shadow-sticker">
+      <div aria-hidden="true" className="halftone-light pointer-events-none absolute inset-0 opacity-60" />
+      <p className="relative inline-block  bg-sun px-3 py-1 font-marker text-lg text-ink">Your booking</p>
       <dl className="relative mt-4">
         <Row label="Event" value={type?.label} />
         <Row label="Date" value={formatLongDate(data.date)} />
@@ -43,10 +35,10 @@ export default function BookingSummary({ data }) {
         <Row label="Venue" value={data.venue.trim()} />
         <Row label="Menu" value={menu.join(', ')} />
       </dl>
-      <div className="relative mt-6 rounded-2xl border border-ember/30 bg-ember/10 p-5">
-        <p className="text-[11px] uppercase tracking-[0.26em] text-ash/50">Guide price</p>
-        <p className="mt-2 font-serif text-3xl tracking-tight text-ash">{estimate.label}</p>
-        <p className="mt-2 text-xs leading-relaxed text-ash/50">{estimate.detail}</p>
+      <div className="relative mt-6 rounded-2xl border border-ink bg-sun p-5 text-ink shadow-sticker">
+        <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-ink/75">Your quote</p>
+        <p className="mt-2 font-display text-3xl">{estimate.label}</p>
+        <p className="mt-2 text-xs font-medium leading-relaxed text-ink/80">{estimate.detail}</p>
       </div>
     </aside>
   )

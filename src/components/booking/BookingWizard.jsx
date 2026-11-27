@@ -42,7 +42,7 @@ function validate(step, data) {
   const errors = {}
   if (step === 0 && !data.type) errors.type = 'Choose the kind of event so we can shape the menu.'
   if (step === 1) {
-    if (!data.date) errors.date = 'Pick a date. Greyed-out days are unavailable.'
+    if (!data.date) errors.date = 'Pick a date. Greyed out days are unavailable.'
     if (data.guests < MIN_GUESTS) errors.guests = `We cater from ${MIN_GUESTS} guests.`
     if (!data.venue.trim()) errors.venue = 'Add a venue name or postcode.'
   }
@@ -71,26 +71,26 @@ function Stepper({ step }) {
           <li key={item.label} className="flex flex-1 items-center last:flex-none" aria-current={current ? 'step' : undefined}>
             <span className="flex items-center gap-3">
               <span
-                className={`flex h-9 w-9 items-center justify-center rounded-full border text-xs font-semibold transition-all duration-500 ${
-                  current
-                    ? 'border-ember bg-ember text-white shadow-[0_0_24px_rgba(200,54,10,0.6)]'
+                className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm font-extrabold transition-all duration-500 ${
+ current
+                    ? 'border-ink bg-chili text-cream shadow-sticker'
                     : done
-                      ? 'border-ember/60 bg-ember/20 text-emberGlow'
-                      : 'border-white/15 text-ash/40'
+                      ? 'border-ink bg-sun text-ink'
+                      : 'border-ink/30 bg-white text-ink/40'
                 }`}
               >
                 {index + 1}
               </span>
               <span
-                className={`hidden text-[11px] uppercase tracking-[0.26em] sm:block ${current ? 'text-ash' : 'text-ash/40'}`}
+                className={`hidden text-xs font-extrabold uppercase tracking-[0.2em] sm:block ${current ? 'text-ink' : 'text-ink/45'}`}
               >
                 {item.label}
               </span>
             </span>
             {index < LAST && (
-              <span className="relative mx-3 h-px flex-1 bg-white/10 sm:mx-5">
+              <span className="relative mx-3 h-1 flex-1 rounded-full bg-ink/15 sm:mx-5">
                 <motion.span
-                  className="absolute inset-0 origin-left bg-ember"
+                  className="absolute inset-0 origin-left rounded-full bg-chili"
                   initial={false}
                   animate={{ scaleX: done ? 1 : 0 }}
                   transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
@@ -107,19 +107,19 @@ function Stepper({ step }) {
 function GuestControl({ value, onChange, error }) {
   const clamp = (next) => onChange(Math.min(MAX_GUESTS, Math.max(MIN_GUESTS, next)))
   const button =
-    'flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-ash transition-colors hover:border-ember disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emberGlow'
+    'flex h-11 w-11 items-center justify-center rounded-full border border-ink bg-cream text-ink transition-colors hover:bg-sun disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-chili'
 
   return (
     <div>
-      <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-ash/55">
-        Guests <span className="text-emberGlow">*</span>
+      <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.2em] text-ink">
+        Guests <span className="text-chili">*</span>
       </p>
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md sm:p-6">
+      <div className="rounded-2xl border border-ink bg-white p-5 shadow-sticker sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <button type="button" aria-label="Fewer guests" className={button} disabled={value <= MIN_GUESTS} onClick={() => clamp(value - 5)}>
             <Minus size={16} aria-hidden="true" />
           </button>
-          <p className="font-serif text-5xl italic tracking-tight text-ash" aria-live="polite">
+          <p className="font-display text-5xl text-ink" aria-live="polite">
             {value}
           </p>
           <button type="button" aria-label="More guests" className={button} disabled={value >= MAX_GUESTS} onClick={() => clamp(value + 5)}>
@@ -134,15 +134,15 @@ function GuestControl({ value, onChange, error }) {
           step={5}
           value={value}
           onChange={(event) => clamp(Number(event.target.value))}
-          className="mt-6 w-full accent-ember"
+          className="mt-6 w-full accent-chili"
         />
-        <div className="mt-1 flex justify-between text-[11px] text-ash/35">
+        <div className="mt-1 flex justify-between text-xs font-semibold text-ink/55">
           <span>{MIN_GUESTS}</span>
           <span>{MAX_GUESTS}+</span>
         </div>
       </div>
       {error && (
-        <p role="alert" className="mt-3 text-sm text-red-300">
+        <p role="alert" className="mt-3 text-sm font-bold text-chili">
           {error}
         </p>
       )}
@@ -246,7 +246,7 @@ export default function BookingWizard() {
                 <h2
                   ref={headingRef}
                   tabIndex={-1}
-                  className="font-serif text-3xl italic tracking-tight text-white/90 focus:outline-none md:text-5xl"
+                  className="font-display text-3xl text-ink focus:outline-none md:text-5xl"
                 >
                   {STEPS[step].title}
                 </h2>
@@ -340,7 +340,7 @@ export default function BookingWizard() {
                 <button
                   type="button"
                   onClick={() => goTo(step - 1)}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.22em] text-ash transition-colors hover:border-ember focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emberGlow"
+                  className="inline-flex items-center gap-2 rounded-full border border-ink bg-cream px-6 py-3.5 text-xs font-extrabold uppercase tracking-[0.18em] text-ink shadow-sticker transition-all duration-200 hover:-translate-y-0.5 hover:bg-sun focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-chili"
                 >
                   <ArrowLeft size={14} aria-hidden="true" /> Back
                 </button>
@@ -353,7 +353,7 @@ export default function BookingWizard() {
                   type={step === LAST ? 'submit' : 'button'}
                   onClick={step === LAST ? undefined : handleNext}
                   disabled={sending}
-                  className="inline-flex items-center gap-2 rounded-full bg-ember px-8 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(200,54,10,0.6)] disabled:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emberGlow"
+                  className="inline-flex items-center gap-2 rounded-full border border-ink bg-chili px-8 py-4 text-xs font-extrabold uppercase tracking-[0.18em] text-cream shadow-sticker transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sticker-lg disabled:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
                 >
                   {step === LAST ? (
                     sending ? (

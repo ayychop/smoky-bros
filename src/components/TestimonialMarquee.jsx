@@ -1,38 +1,28 @@
-import { motion } from 'framer-motion'
+import { Star } from 'lucide-react'
 import { TESTIMONIALS } from '../data/site'
+import Ticker from './Ticker'
 
-// One half of the loop. Two identical halves make a -50% shift seamless,
-// and each half is wider than any screen so the row never shows a gap.
-function Half({ hidden = false }) {
-  return (
-    <div aria-hidden={hidden || undefined} className="flex shrink-0 items-center">
-      {Array.from({ length: 4 }).flatMap((_, round) =>
-        TESTIMONIALS.map((item) => (
-          <span key={`${round}-${item.author}`} className="flex shrink-0 items-center whitespace-nowrap">
-            <span>
-              {item.quote} - {item.author}
-            </span>
-            <span aria-hidden="true" className="mx-8 text-white/30">
-              &bull;
-            </span>
-          </span>
-        )),
-      )}
-    </div>
-  )
-}
-
+// A deep red band of five star reviews that never stops moving
 export default function TestimonialMarquee() {
   return (
-    <section aria-label="What people say" className="mt-32 w-full overflow-hidden border-y border-white/10 bg-black/50 py-6 font-serif text-lg italic text-ember md:mt-40">
-      <motion.div
-        className="flex w-max"
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: 50, ease: 'linear', repeat: Infinity }}
-      >
-        <Half />
-        <Half hidden />
-      </motion.div>
+    <section aria-label="What people say" className="relative w-full overflow-hidden bg-chili py-5 text-white">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.45),transparent_18%,transparent_82%,rgba(0,0,0,0.45))]" />
+      <Ticker label="Reviews" duration={55} className="relative">
+        {Array.from({ length: 3 }).flatMap((_, round) =>
+          TESTIMONIALS.map((item) => (
+            <span key={`${round}-${item.author}`} className="flex shrink-0 items-center whitespace-nowrap">
+              <span className="flex items-center gap-1" aria-label="Five stars">
+                {Array.from({ length: 5 }).map((__, star) => (
+                  <Star key={star} size={18} aria-hidden="true" className="fill-white text-white" strokeWidth={1.5} />
+                ))}
+              </span>
+              <span className="ml-5 font-display text-2xl text-white md:text-3xl">{item.quote}</span>
+              <span className="font-cond balance-track ml-4 rounded-full border border-white/40 px-3 py-1 text-xs tracking-[0.22em] text-white">{item.author}</span>
+              <span aria-hidden="true" className="mx-10 h-2 w-2 rotate-45 bg-white/70" />
+            </span>
+          )),
+        )}
+      </Ticker>
     </section>
   )
 }

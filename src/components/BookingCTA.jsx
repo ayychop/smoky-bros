@@ -1,42 +1,44 @@
 import { Link } from 'react-router-dom'
+import FlameBro from './FlameBro'
 import MagneticButton from './MagneticButton'
 import Reveal from './Reveal'
+import { ExitSign } from './RoadSign'
+import Scallop from './Scallop'
+import Smoke from './Smoke'
 
-const ring = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emberGlow'
+const ring = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sun'
 
-export default function BookingCTA({ title = 'Your event. Our fire.' }) {
+export default function BookingCTA({ title = 'Your event, our fire' }) {
   return (
-    <section className="relative overflow-hidden px-6 pt-32 md:pt-40">
-      <div className="grill-card relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 px-6 py-20 text-center backdrop-blur-md md:py-28">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-full bg-[radial-gradient(ellipse_at_50%_120%,rgba(255,77,28,0.4)_0%,rgba(200,54,10,0.12)_40%,transparent_70%)]"
-        />
-        <Reveal className="relative">
-          <p className="text-xs uppercase tracking-[0.4em] text-emberGlow">Bookings open for 2027</p>
-          <h2 className="mx-auto mt-6 max-w-3xl font-serif text-4xl italic leading-[1.05] tracking-tight text-white/90 md:text-6xl">
-            {title}
-          </h2>
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <MagneticButton>
-              <Link
-                to="/book"
-                className={`inline-flex items-center justify-center rounded-full bg-ember px-10 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(200,54,10,0.6)] ${ring}`}
-              >
-                Book your event
-              </Link>
-            </MagneticButton>
-            <MagneticButton>
-              <Link
-                to="/enquiry"
-                className={`inline-flex items-center justify-center rounded-full border border-white/20 px-10 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-ash transition-colors duration-300 hover:border-ember hover:bg-ember/10 ${ring}`}
-              >
-                Ask a question
-              </Link>
-            </MagneticButton>
-          </div>
-        </Reveal>
-      </div>
+    <section className="relative isolate overflow-hidden bg-ink px-6 pb-20 pt-24 text-center text-white">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_50%_100%,rgba(255,90,31,0.4),transparent_70%),radial-gradient(40%_40%_at_50%_0%,rgba(217,43,11,0.25),transparent_70%)]" />
+      <Smoke tone="dark" plumes={4} wisps={4} />
+      <Scallop />
+      <Reveal className="relative mx-auto max-w-3xl">
+        <FlameBro alive className="mx-auto mb-6 h-36 w-auto" />
+        <ExitSign exit="06" className="text-white">
+          Bookings open for 2027
+        </ExitSign>
+        <h2 className="mt-5 font-display text-5xl leading-[1.02] text-white md:text-7xl">{title}</h2>
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <MagneticButton>
+            <Link
+              to="/book"
+              className={`inline-flex items-center justify-center rounded-full bg-chili px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white shadow-ember transition-all duration-200 hover:-translate-y-0.5 hover:bg-flame ${ring}`}
+            >
+              Book your event
+            </Link>
+          </MagneticButton>
+          <MagneticButton>
+            <Link
+              to="/enquiry"
+              className={`inline-flex items-center justify-center rounded-full border border-white/30 px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-ink ${ring}`}
+            >
+              Ask a question
+            </Link>
+          </MagneticButton>
+        </div>
+      </Reveal>
     </section>
   )
 }

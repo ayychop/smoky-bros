@@ -1,35 +1,42 @@
-import { motion } from 'framer-motion'
-import { EASE_OUT_EXPO } from '../easing'
+import { CalendarCheck, Flame, MessageSquare, UtensilsCrossed } from 'lucide-react'
 import { PROCESS } from '../data/site'
+import Plate from './Plate'
 import Reveal from './Reveal'
+import { ExitSign } from './RoadSign'
+import Scallop from './Scallop'
+import Smoke from './Smoke'
+
+const ICONS = [MessageSquare, CalendarCheck, UtensilsCrossed, Flame]
+const LEAN = [15, 5, -5, -15]
 
 export default function ProcessSteps() {
   return (
-    <section className="mx-auto max-w-6xl px-6 pt-32 md:pt-40">
-      <Reveal className="mb-14">
-        <p className="text-xs uppercase tracking-[0.4em] text-emberGlow">How it works</p>
-        <h2 className="mt-5 font-serif text-4xl italic tracking-tight text-white/90 md:text-6xl">
-          From enquiry to embers
-        </h2>
-      </Reveal>
+    <section className="ember-glow relative isolate overflow-hidden bg-ink px-6 pb-20 pt-24 text-white">
+      <Smoke tone="dark" plumes={3} wisps={3} />
+      <Scallop />
+      <div className="relative mx-auto max-w-6xl">
+        <Reveal className="mb-12">
+          <ExitSign exit="04" className="text-white">
+            How it works
+          </ExitSign>
+          <h2 className="mt-4 font-display text-4xl text-white md:text-6xl">From enquiry to embers</h2>
+        </Reveal>
 
-      <ol className="relative grid grid-cols-1 gap-6 md:grid-cols-4">
-        {PROCESS.map((step, index) => (
-          <motion.li
-            key={step.index}
-            className="grill-card relative rounded-2xl border border-white/10 bg-white/5 p-7 backdrop-blur-md"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.9, delay: index * 0.12, ease: EASE_OUT_EXPO }}
-          >
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-            <span className="font-serif text-5xl italic text-ember/80">{step.index}</span>
-            <h3 className="mt-6 font-serif text-2xl tracking-tight text-ash">{step.title}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-ash/60">{step.copy}</p>
-          </motion.li>
-        ))}
-      </ol>
+        <ol className="mt-4 grid list-none gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6 lg:[perspective:1500px]">
+          {PROCESS.map((step, index) => (
+            <Plate
+              key={step.index}
+              number={step.index}
+              label={`Step ${index + 1}`}
+              title={step.title}
+              copy={step.copy}
+              Icon={ICONS[index]}
+              lean={LEAN[index]}
+              delay={index * 0.1}
+            />
+          ))}
+        </ol>
+      </div>
     </section>
   )
 }
