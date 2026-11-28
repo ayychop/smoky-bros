@@ -47,12 +47,12 @@ export const BEAD_AT = {
 }
 export const BEAD_RADIUS = d * Math.SQRT2
 
-/** Where the dotted trails start, clear of the flame's side tongues */
-export const SPOKE_FROM = 24
+/** Where the dotted trails start: well inside the flame, which is drawn over them, so they leave from its outline wherever it is */
+export const SPOKE_FROM = 14
 
-// The flame bro is drawn centred by its bounding box, but its weight (the belly and the face) sits low in the box. Lifting
-// it puts its optical centre on the centre of the wheel. The lift is a share of the stage: 2.2 would centre it at rest, but
-// he floats up as he bobs (about 1.6 at the top), so his average position is 0.8 higher. Taking that off the lift makes
-// the centre of the wheel the middle of his drift.
-export const MASCOT_HEIGHT = 56
-export const MASCOT_LIFT = 1.4
+// The flame bro is drawn centred by its bounding box, but its weight (the belly and the face) sits low in the box, and
+// anything placed dead centre reads as low. So he is set to the optical centre: his eyes sit on the centre line of the
+// dial and the bulk of him sits just above it. The lift is a share of the stage. He also floats up as he bobs (about 1.6
+// at the top), so his average is 0.8 higher than where he rests, which the lift allows for.
+export const MASCOT_HEIGHT = 58
+export const MASCOT_LIFT = 4.8

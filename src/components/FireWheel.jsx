@@ -43,12 +43,14 @@ for (let degrees = 0; degrees < 360; degrees += 5) {
   TICKS.push({ degrees, major, length })
 }
 
-// The sparks on each spoke: small and faint by the flame, larger and brighter toward the bead, as if heat is gathering
+// The sparks on each spoke: an even trail that starts behind the flame, so it leaves the flame itself, and is brightest
+// there, easing off toward the bead as the heat is handed over
 const SPOKE_TO = BEAD_RADIUS - 2.1
-const SPARKS = 6
+const SPARK_GAP = 1.9
+const SPARKS = Math.round((SPOKE_TO - SPOKE_FROM) / SPARK_GAP) + 1
 const SPOKE_DOTS = Array.from({ length: SPARKS }, (_, index) => {
   const t = index / (SPARKS - 1)
-  return { radius: SPOKE_FROM + (SPOKE_TO - SPOKE_FROM) * t, size: 0.3 + 0.3 * t, opacity: 0.4 + 0.6 * t }
+  return { radius: SPOKE_FROM + (SPOKE_TO - SPOKE_FROM) * t, size: 0.4 - 0.06 * t, opacity: 1 - 0.42 * t }
 })
 const DIAGONALS = { brisket: 315, seal: 45, wings: 135, ribs: 225 }
 
@@ -88,13 +90,16 @@ export default function FireWheel() {
           />
         ))}
 
-        {/* The spokes: the flame passing its heat out to each of the four, a trail of sparks that grows toward the bead */}
-        {Object.entries(DIAGONALS).map(([name, degrees]) =>
-          SPOKE_DOTS.map(({ radius, size, opacity }) => {
-            const { x, y } = polar(degrees, radius)
-            return <circle key={`${name}${radius}`} cx={f(x)} cy={f(y)} r={f(size)} fill="#FFB703" fillOpacity={f(opacity)} />
-          }),
-        )}
+        {/* The spokes: the flame passing its heat out to each of the four. A faint line, and sparks along it. */}
+        {Object.entries(DIAGONALS).map(([name, degrees]) => (
+          <g key={name}>
+            <path d={`M${at(degrees, SPOKE_FROM)} L${at(degrees, BEAD_RADIUS)}`} stroke="#FFB703" strokeOpacity="0.14" strokeWidth="0.3" strokeLinecap="round" />
+            {SPOKE_DOTS.map(({ radius, size, opacity }) => {
+              const { x, y } = polar(degrees, radius)
+              return <circle key={radius} cx={f(x)} cy={f(y)} r={f(size)} fill="#FFB703" fillOpacity={f(opacity)} />
+            })}
+          </g>
+        ))}
       </svg>
 
       {/* An ember that travels the rim, with a short tail of light behind it */}
