@@ -5,7 +5,7 @@ import { useBootDone } from '../boot'
 import { SHOWCASE, SLOGAN } from '../data/site'
 import { EASE_OUT_EXPO } from '../easing'
 import { scrollToTarget } from '../lib/lenis'
-import { polar, STOPS } from '../lib/wheelGeometry'
+import { ITEM_AT, ITEM_WIDTH, MASCOT_HEIGHT, MASCOT_LIFT } from '../lib/wheelGeometry'
 import BookSeal from './BookSeal'
 import FireWheel from './FireWheel'
 import FlameBro from './FlameBro'
@@ -28,13 +28,9 @@ const burn = (index, total) => {
   return `rgb(${FROM.map((from, i) => Math.round(from + (TO[i] - from) * t)).join(',')})`
 }
 
-// The four things on the wheel. Each sits with its centre exactly on the rim, at mirrored angles, and is the same
-// share of the stage wide, so the spacing is identical on every screen: a card is 24% of the stage, the flame bro 56% tall.
-const ITEM_WIDTH = '24%'
-const SATELLITES = ['brisket', 'seal', 'wings', 'ribs'].map((key) => {
-  const { x, y } = polar(STOPS[key])
-  return { key, left: `${x}%`, top: `${y}%` }
-})
+// The four things on the wheel. The wheel's geometry decides where each goes: centres on the rim, mirrored, all the same
+// width, with each bead level with the middle of the inner edge. So the spacing is identical on every screen.
+const SATELLITES = Object.entries(ITEM_AT).map(([key, { x, y }]) => ({ key, left: `${x.toFixed(2)}%`, top: `${y.toFixed(2)}%` }))
 
 const TICKER = ['Smoked low and slow', 'Cooked over live fire', 'Catering and street food', 'We come to you', 'Fun for all ages', 'Made in Maidenhead']
 
@@ -151,8 +147,8 @@ export default function Hero() {
 
           <motion.div className="absolute inset-0 z-20 flex items-center justify-center" style={{ y: broY, scale: broScale, opacity: broOpacity }}>
             <motion.div
-              className="h-[56%]"
-              style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 900 }}
+              className="relative"
+              style={{ height: `${MASCOT_HEIGHT}%`, top: `-${MASCOT_LIFT}%`, rotateX: tiltX, rotateY: tiltY, transformPerspective: 900 }}
               initial={{ opacity: 0, scale: 0.8, y: 30 }}
               animate={ready ? { opacity: 1, scale: 1, y: 0 } : undefined}
               transition={{ duration: 1.1, ease: EASE_OUT_EXPO, delay: 0.3 }}
@@ -162,7 +158,7 @@ export default function Hero() {
           </motion.div>
 
           {SATELLITES.map((item, index) => (
-            <div key={item.key} className="absolute z-30 -translate-x-1/2 -translate-y-1/2" style={{ left: item.left, top: item.top, width: ITEM_WIDTH }}>
+            <div key={item.key} className="absolute z-30 -translate-x-1/2 -translate-y-1/2" style={{ left: item.left, top: item.top, width: `${ITEM_WIDTH}%` }}>
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, y: 20 }}
                 animate={ready ? { opacity: 1, scale: 1, y: 0 } : undefined}

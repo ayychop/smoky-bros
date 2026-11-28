@@ -1,5 +1,5 @@
 import usePauseOffscreen from '../lib/usePauseOffscreen'
-import { polar, STOPS, WHEEL_RADIUS } from '../lib/wheelGeometry'
+import { BEAD_AT, BEAD_RADIUS, ITEM_ANGLE, ITEM_AT, ITEM_WIDTH, polar, SPOKE_FROM, WHEEL_RADIUS } from '../lib/wheelGeometry'
 
 // The wheel round the flame bro, drawn as a pitmaster's smoker dial. It has a job: it is the dial on the side of the
 // smoker, set to 225, the temperature that low and slow is cooked at. Heat climbs the gauge toward the top, an ember
@@ -8,9 +8,10 @@ import { polar, STOPS, WHEEL_RADIUS } from '../lib/wheelGeometry'
 // Everything lives in one square, 100 units a side, so the geometry is exact at every size.
 // An angle is in degrees clockwise from the top. The wheel's centre is (50, 50).
 
-// The gauge runs from the lower left, up over the top and down to the lower right. The gap at the bottom is for the nameplate.
-const GAUGE_FROM = 225
-const GAUGE_TO = 135
+// The gauge runs from the lower left card, up over the top and down to the lower right card, so its ends tuck under them.
+// The gap at the bottom, between the two lower cards, is for the nameplate.
+const GAUGE_FROM = 180 + ITEM_ANGLE
+const GAUGE_TO = 180 - ITEM_ANGLE
 
 const f = (n) => Math.round(n * 100) / 100
 const at = (degrees, radius) => {
@@ -18,14 +19,38 @@ const at = (degrees, radius) => {
   return `${f(x)} ${f(y)}`
 }
 
+// Is this point under one of the four? Ticks that would peek out from behind a card or the seal are left out.
+// A card is a little taller than wide, so its height is the safe worst case across screen sizes.
+const CARD_HALF_HEIGHT = 13.6
+const MARGIN = 1.6
+const covered = ({ x, y }) =>
+  Object.entries(ITEM_AT).some(([name, centre]) =>
+    name === 'seal'
+      ? Math.hypot(x - centre.x, y - centre.y) < ITEM_WIDTH / 2 + MARGIN
+      : Math.abs(x - centre.x) < ITEM_WIDTH / 2 + MARGIN && Math.abs(y - centre.y) < CARD_HALF_HEIGHT + MARGIN,
+  )
+
 // Tick marks round the outside of the gauge: a fine one every 5 degrees, a long gold one every 45
 const TICKS = []
 for (let degrees = 0; degrees < 360; degrees += 5) {
   const inGap = degrees > GAUGE_TO && degrees < GAUGE_FROM
   if (inGap) continue
   const major = degrees % 45 === 0
-  TICKS.push({ degrees, major, length: major ? 2.4 : 1.1 })
+  const length = major ? 2.4 : 1.1
+  const start = polar(degrees, WHEEL_RADIUS + 1.7)
+  const end = polar(degrees, WHEEL_RADIUS + 1.7 + length)
+  if (covered(start) || covered(end)) continue
+  TICKS.push({ degrees, major, length })
 }
+
+// The sparks on each spoke: small and faint by the flame, larger and brighter toward the bead, as if heat is gathering
+const SPOKE_TO = BEAD_RADIUS - 2.1
+const SPARKS = 6
+const SPOKE_DOTS = Array.from({ length: SPARKS }, (_, index) => {
+  const t = index / (SPARKS - 1)
+  return { radius: SPOKE_FROM + (SPOKE_TO - SPOKE_FROM) * t, size: 0.3 + 0.3 * t, opacity: 0.4 + 0.6 * t }
+})
+const DIAGONALS = { brisket: 315, seal: 45, wings: 135, ribs: 225 }
 
 // Heat passes from the flame out along each spoke, one after another, round the wheel
 const HEAT_ORDER = ['brisket', 'seal', 'wings', 'ribs']
@@ -63,18 +88,13 @@ export default function FireWheel() {
           />
         ))}
 
-        {/* The spokes: the flame passing its heat out to each of the four. A dotted trail, like sparks. */}
-        {Object.values(STOPS).map((degrees) => (
-          <path
-            key={degrees}
-            d={`M${at(degrees, 19.5)} L${at(degrees, 28.5)}`}
-            stroke="#FFB703"
-            strokeOpacity="0.7"
-            strokeWidth="0.9"
-            strokeDasharray="0.01 1.9"
-            strokeLinecap="round"
-          />
-        ))}
+        {/* The spokes: the flame passing its heat out to each of the four, a trail of sparks that grows toward the bead */}
+        {Object.entries(DIAGONALS).map(([name, degrees]) =>
+          SPOKE_DOTS.map(({ radius, size, opacity }) => {
+            const { x, y } = polar(degrees, radius)
+            return <circle key={`${name}${radius}`} cx={f(x)} cy={f(y)} r={f(size)} fill="#FFB703" fillOpacity={f(opacity)} />
+          }),
+        )}
       </svg>
 
       {/* An ember that travels the rim, with a short tail of light behind it */}
@@ -87,14 +107,14 @@ export default function FireWheel() {
         }}
       />
 
-      {/* The beads where each spoke meets its card. They glow in turn, so the heat seems to travel round the wheel. */}
+      {/* The beads where each spoke meets its card, level with the middle of the card's inner edge. They glow in turn, so the heat seems to travel round the wheel. */}
       {HEAT_ORDER.map((name, index) => {
-        const { x, y } = polar(STOPS[name], 28.5)
+        const { x, y } = BEAD_AT[name]
         return (
           <span
             key={name}
             className="wheel-bead absolute block h-[2.1%] w-[2.1%] rounded-full bg-gold"
-            style={{ left: `${x}%`, top: `${y}%`, marginLeft: '-1.05%', marginTop: '-1.05%', animationDelay: `${index * 1.1}s` }}
+            style={{ left: `${f(x)}%`, top: `${f(y)}%`, marginLeft: '-1.05%', marginTop: '-1.05%', animationDelay: `${index * 1.1}s` }}
           />
         )
       })}
